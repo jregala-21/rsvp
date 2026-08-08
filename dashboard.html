@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+  <meta content="#781d97" name="theme-color"/>
+  <title>
+   EMPOWERED RSVP Dashboard
+  </title>
+  <style>
+   :root {
+  --p:#7b209a;
+  --p2:#b84bd5;
+  --ink:#2c1633;
+  --muted:#76617b;
+  --card:rgba(255,255,255,.9);
+  --green:#268a57;
+  --blue:#3868d5;
+  --shadow:0 18px 50px rgba(79,19,96,.14)
+}
+* {
+  box-sizing:border-box
+}
+body {
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:radial-gradient(circle at 8% 0,#fff 0,transparent 25%),radial-gradient(circle at 90% 12%,#e3b6f1 0,transparent 28%),linear-gradient(155deg,#eee0f6,#faf7fc)
+}
+.wrap {
+  width:min(100%,1180px);
+  margin:auto;
+  padding:18px
+}
+.top {
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#6f178d,#b84bd5);
+  color:#fff;
+  border-radius:28px;
+  padding:24px;
+  box-shadow:var(--shadow)
+}
+.top:after {
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  right:-65px;
+  top:-95px;
+  background:rgba(255,255,255,.12)
+}
+.eyebrow {
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  font-weight:900;
+  font-size:11px;
+  opacity:.78
+}
+h1 {
+  font-size:clamp(27px,5vw,42px);
+  line-height:1;
+  margin:7px 0
+}
+.sub {
+  margin:0;
+  opacity:.88;
+  font-size:14px
+}
+.live {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:15px;
+  font-size:11px;
+  opacity:.9
+}
+.dot {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#91ffb7;
+  box-shadow:0 0 0 5px rgba(145,255,183,.13);
+  animation:pulse 1.6s infinite
+}
+@keyframes pulse {
+  50% {
+    box-shadow:0 0 0 9px rgba(145,255,183,0)
+  }
+}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:13px;
+  margin:16px 0
+}
+.stat {
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:23px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(15px)
+}
+.stat span {
+  font-size:12px;
+  color:var(--muted);
+  font-weight:850
+}
+.stat strong {
+  display:block;
+  font-size:clamp(34px,6vw,52px);
+  line-height:1.05;
+  margin-top:6px
+}
+.total strong {
+  color:var(--p)
+}
+.person strong {
+  color:var(--green)
+}
+.online strong {
+  color:var(--blue)
+}
+.panel {
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:24px;
+  padding:17px;
+  box-shadow:var(--shadow)
+}
+.panelhead {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px
+}
+.panelhead h2 {
+  margin:0;
+  font-size:21px
+}
+.search {
+  height:44px;
+  min-width:260px;
+  border:1px solid #dec9e6;
+  border-radius:14px;
+  padding:0 13px;
+  font:inherit;
+  color:#672280;
+  outline:none
+}
+.search:focus {
+  border-color:#9e35bc;
+  box-shadow:0 0 0 4px rgba(158,53,188,.1)
+}
+.tablewrap {
+  overflow:auto;
+  border:1px solid #eaddef;
+  border-radius:17px;
+  background:#fff
+}
+table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:710px
+}
+th,td {
+  padding:12px 14px;
+  border-bottom:1px solid #f0e7f3;
+  text-align:left;
+  font-size:13px
+}
+th {
+  position:sticky;
+  top:0;
+  background:#f9f1fb;
+  color:#695070;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-size:10px;
+  z-index:2
+}
+tr:last-child td {
+  border-bottom:0
+}
+tbody tr:hover {
+  background:#fdf9ff
+}
+.badge {
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900
+}
+.badge.person {
+  background:#e5f6ec;
+  color:#29774d
+}
+.badge.online {
+  background:#eaf0ff;
+  color:#355cc0
+}
+.empty {
+  text-align:center;
+  padding:35px;
+  color:var(--muted);
+  font-size:14px
+}
+.status {
+  font-size:11px;
+  color:#765f7b;
+  margin:9px 2px 0;
+  text-align:right
+}
+.foot {
+  text-align:center;
+  color:#7e6984;
+  font-size:11px;
+  padding:20px
+}
+.error {
+  background:#fff0f2;
+  color:#913748;
+  padding:13px;
+  border-radius:14px;
+  margin-top:12px;
+  display:none
+}
+.error.show {
+  display:block
+}
+@media(max-width:700px) {
+  .wrap {
+    padding:11px
+  }
+  .top {
+    border-radius:22px;
+    padding:19px
+  }
+  .stats {
+    grid-template-columns:1fr 1fr
+  }
+  .stat.total {
+    grid-column:1/-1
+  }
+  .stat {
+    padding:15px
+  }
+  .panel {
+    padding:13px
+  }
+  .panelhead {
+    flex-direction:column;
+    align-items:stretch
+  }
+  .search {
+    min-width:0;
+    width:100%
+  }
+  .status {
+    text-align:left
+  }
+}
+@media(min-width:1000px) {
+  .wrap {
+    padding:28px
+  }
+  .stats {
+    gap:18px
+  }
+  .panel {
+    padding:22px
+  }
+}
+  </style>
+ </head>
+ <body>
+  <main class="wrap">
+   <section class="top">
+    <div class="eyebrow">
+     Jesus Is Lord Taguig City &bull; 33 Years
+    </div>
+    <h1>
+     JIL TAGUIG 33rd ANNIVERSARY RSVP Dashboard
+    </h1>
+    <p class="sub">
+     Live attendance overview from Google Sheets.
+    </p>
+    <div class="live">
+     <span class="dot">
+     </span>
+     <span>
+      Auto-updating every 5 seconds
+     </span>
+    </div>
+    <div class="error" id="error">
+    </div>
+   </section>
+   <section class="stats">
+    <div class="stat total">
+     <span>
+      Total Responses
+     </span>
+     <strong id="total">
+      0
+     </strong>
+    </div>
+    <div class="stat person">
+     <span>
+      Joining In Person
+     </span>
+     <strong id="inPerson">
+      0
+     </strong>
+    </div>
+    <div class="stat online">
+     <span>
+      Joining Online
+     </span>
+     <strong id="online">
+      0
+     </strong>
+    </div>
+   </section>
+   <section class="panel">
+    <div class="panelhead">
+     <h2>
+      Guest List
+     </h2>
+     <input class="search" id="search" oninput="render()" placeholder="Search name, contact, service&hellip;"/>
+    </div>
+    <div class="tablewrap">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         #
+        </th>
+        <th>
+         Name
+        </th>
+        <th>
+         Contact
+        </th>
+        <th>
+         Attendance
+        </th>
+        <th>
+         Service
+        </th>
+        <th>
+         Submitted
+        </th>
+       </tr>
+      </thead>
+      <tbody id="rows">
+      </tbody>
+     </table>
+     <div class="empty" id="empty">
+      Loading RSVP data&hellip;
+     </div>
+    </div>
+    <div class="status" id="status">
+     Waiting for first update&hellip;
+    </div>
+   </section>
+   <div class="foot">
+    EMPOWERED &bull; Walking in Discipline. Living in Breakthrough.
+   </div>
+  </main>
+  <script>
+   const GOOGLE_APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbyCzSV8m-OhtXRsIpSMmqwHPcz168MKp8lKjIPk42vn5Ek1Q-SVoewq259q1p8mMacCvg/exec";
+let records=[],loading=false;
+async function loadData() {
+  if(loading)return;
+  loading=true;
+  try {
+    const r=await fetch(GOOGLE_APPS_SCRIPT_URL+'?action=list&t='+Date.now(), {
+      cache:'no-store'
+    });
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    if(data.ok===false)throw new Error(data.message||'Could not load data');
+    records=Array.isArray(data.records)?data.records:[];
+    updateStats(data.summary);
+    render();
+    document.getElementById('status').textContent='Last updated: '+new Date().toLocaleTimeString([], {
+      hour:'2-digit',minute:'2-digit',second:'2-digit'
+    });
+    document.getElementById('error').classList.remove('show')
+  } catch(err) {
+    console.error(err);
+    const e=document.getElementById('error');
+    e.textContent='Live data could not be loaded. Check the Apps Script deployment.';
+    e.classList.add('show');
+    document.getElementById('status').textContent='Last update attempt: '+new Date().toLocaleTimeString()
+  } finally {
+    loading=false
+  }
+}
+function updateStats(s) {
+  document.getElementById('total').textContent=s?.total??records.length;
+  document.getElementById('inPerson').textContent=s?.inPerson??records.filter(r=>norm(r.attendance)==='in person').length;
+  document.getElementById('online').textContent=s?.online??records.filter(r=>norm(r.attendance)==='online').length
+}
+function render() {
+  const q=document.getElementById('search').value.trim().toLowerCase(),f=records.filter(r=>!q||[r.name,r.contact,r.attendance,r.service].join(' ').toLowerCase().includes(q)),tbody=document.getElementById('rows'),empty=document.getElementById('empty');
+  tbody.innerHTML='';
+  if(!f.length) {
+    empty.style.display='block';
+    empty.textContent=records.length?'No matching guests found.':'No RSVP responses yet.';
+    return
+  }
+  empty.style.display='none';
+  f.forEach((r,i)=> {
+    const tr=document.createElement('tr'),a=String(r.attendance||''),c=norm(a)==='online'?'online':'person'; tr.innerHTML=`<td>${i+1}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.contact)}</td><td><span class="badge ${c}">${esc(a)}</span></td><td>${esc(formatService(r.service))}</td><td>${esc(formatDate(r.receivedAt||r.submittedAt))}</td>`; tbody.appendChild(tr)
+  })
+}
+
+function formatService(value) {
+  const text = String(value || "").trim();
+
+  if (!text) {
+    return "";
+  }
+
+  const normalized = text.toLowerCase().replace(/\s+/g, "");
+
+  if (normalized.includes("online")) {
+    return "Online";
+  }
+
+  if (
+    normalized.includes("8:00am") ||
+    normalized.includes("firstservice") ||
+    /\b08:00(?::00)?\b/.test(text)
+  ) {
+    return "8:00 AM";
+  }
+
+  if (
+    normalized.includes("2:00pm") ||
+    normalized.includes("secondservice") ||
+    /\b14:00(?::00)?\b/.test(text)
+  ) {
+    return "2:00 PM";
+  }
+
+  const parsed = new Date(text);
+
+  if (!isNaN(parsed.getTime())) {
+    const hours = parsed.getHours();
+    const minutes = parsed.getMinutes();
+
+    if (hours === 8 && minutes === 0) {
+      return "8:00 AM";
+    }
+
+    if (hours === 14 && minutes === 0) {
+      return "2:00 PM";
+    }
+  }
+
+  return text;
+}
+
+function norm(v) {
+  return String(v||'').trim().toLowerCase()
+}
+function esc(v) {
+  return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot; ',"'":'&#039;'}[m]))}function formatDate(v){if(!v)return'';const d=new Date(v);return isNaN(d)?String(v):d.toLocaleString()}
+loadData();setInterval(loadData,5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadData()});
+  </script>
+ </body>
+</html>

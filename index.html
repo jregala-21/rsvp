@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#7a1d9a">
+    <title>EMPOWERED — JIL Taguig City 33 Years</title>
+    <meta name="description" content="EMPOWERED — Jesus Is Lord Taguig City 33rd Anniversary, August 30, 2026.">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%237c1f9d%22/><text x=%2250%22 y=%2268%22 font-size=%2260%22 text-anchor=%22middle%22>✝</text></svg>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        :root {
+            --p: #7c1f9d;
+            --p2: #ba4cda;
+            --ink: #2e1536;
+            --muted: #765e7c;
+            --glass: rgba(255, 255, 255, .88);
+            --line: rgba(255, 255, 255, .58);
+            --shadow: 0 24px 60px rgba(62, 7, 82, .22);
+            --r: 28px
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #eedcf7;
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        body:before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background: radial-gradient(circle at 10% 5%, #fff 0 5%, transparent 24%), radial-gradient(circle at 88% 16%, #d883ef 0, transparent 30%), linear-gradient(145deg, #6c198e, #b74bd5 40%, #f7eaff 82%)
+        }
+
+        .shell {
+            width: min(100%, 1180px);
+            margin: auto;
+            min-height: 100svh;
+            position: relative;
+            padding: 0 0 30px
+        }
+
+        .glitter {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 20;
+            overflow: hidden
+        }
+
+        .spark {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 10px #fff, 0 0 20px #e8b8ff;
+            opacity: .8;
+            animation: twinkle var(--d) ease-in-out infinite alternate;
+            animation-delay: var(--delay)
+        }
+
+        .snow {
+            position: absolute;
+            top: -12vh;
+            color: rgba(255, 255, 255, .92);
+            filter: drop-shadow(0 0 7px rgba(255, 255, 255, .85));
+            animation: snowFall var(--fall) linear infinite;
+            animation-delay: var(--delay);
+            will-change: transform, opacity;
+            user-select: none
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: .08;
+                transform: scale(.4) rotate(0)
+            }
+
+            100% {
+                opacity: .95;
+                transform: scale(1.45) rotate(90deg)
+            }
+        }
+
+        @keyframes snowFall {
+            0% {
+                transform: translate3d(0, -12vh, 0) rotate(0deg);
+                opacity: 0
+            }
+
+            10% {
+                opacity: .85
+            }
+
+            88% {
+                opacity: .55
+            }
+
+            100% {
+                transform: translate3d(var(--drift), 112vh, 0) rotate(300deg);
+                opacity: 0
+            }
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background: #8d2bad;
+            min-height: 610px;
+            aspect-ratio: 9/15
+        }
+
+        .hero-media {
+            position: absolute;
+            inset: 0
+        }
+
+        .hero img,
+        .map-view {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity .58s ease, transform .68s ease
+        }
+
+        .hero img {
+            object-fit: cover;
+            z-index: 1;
+            filter: saturate(1.05) contrast(1.02)
+        }
+
+        .map-view {
+            border: 0;
+            z-index: 2;
+            opacity: 0;
+            transform: scale(1.035);
+            pointer-events: none;
+            background: #eee
+        }
+
+        .hero.show-map img {
+            opacity: 0;
+            transform: scale(.985)
+        }
+
+        .hero.show-map .map-view {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto
+        }
+
+        .hero:after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, transparent 60%, rgba(49, 3, 66, .15) 76%, rgba(49, 3, 66, .82) 100%);
+            z-index: 3
+        }
+
+        .hero-actions {
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            bottom: 18px;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        button,
+        .btn {
+            font: inherit;
+            border: 0;
+            border-radius: 18px;
+            min-height: 52px;
+            padding: 12px 16px;
+            font-weight: 900;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: .18s ease
+        }
+
+        button:active,
+        .btn:active {
+            transform: scale(.98)
+        }
+
+        .primary {
+            background: #fff;
+            color: #70198f;
+            box-shadow: 0 12px 30px rgba(31, 0, 39, .25)
+        }
+
+        .secondary {
+            background: rgba(39, 5, 53, .8);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, .22);
+            backdrop-filter: blur(12px)
+        }
+
+        .content {
+            padding: 20px 16px;
+            display: grid;
+            gap: 18px
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px)
+        }
+
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: .17em;
+            font-size: 11px;
+            font-weight: 950;
+            color: #8533a3
+        }
+
+        .card h2 {
+            font-size: clamp(25px, 6vw, 36px);
+            line-height: 1.02;
+            margin: 7px 0 10px
+        }
+
+        .lead {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #5d4265;
+            margin: 0
+        }
+
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 20px 0
+        }
+
+        .timebox {
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            background: linear-gradient(145deg, #fff, #f4dcfb);
+            border-radius: 20px;
+            padding: 14px 4px;
+            box-shadow: 0 10px 24px rgba(100, 28, 122, .11)
+        }
+
+        .timebox:before {
+            content: "";
+            position: absolute;
+            inset: -50%;
+            background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, .95) 50%, transparent 60%);
+            transform: translateX(-70%);
+            animation: shine 3.8s infinite
+        }
+
+        .timebox strong {
+            position: relative;
+            display: block;
+            font-size: clamp(24px, 7vw, 38px);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            color: #8528a5;
+            text-shadow: 0 2px 0 #fff
+        }
+
+        .timebox strong.tick {
+            animation: numberPop .38s cubic-bezier(.2, .8, .2, 1)
+        }
+
+        .timebox span {
+            position: relative;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: #725879;
+            font-weight: 850
+        }
+
+        @keyframes numberPop {
+            0% {
+                transform: translateY(-5px) scale(.88);
+                opacity: .35
+            }
+
+            70% {
+                transform: translateY(1px) scale(1.08)
+            }
+
+            100% {
+                transform: none;
+                opacity: 1
+            }
+        }
+
+        @keyframes shine {
+
+            0%,
+            55% {
+                transform: translateX(-70%) rotate(8deg)
+            }
+
+            75%,
+            100% {
+                transform: translateX(70%) rotate(8deg)
+            }
+        }
+
+        .details {
+            display: grid;
+            gap: 10px
+        }
+
+        .detail {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 13px;
+            border-radius: 17px;
+            background: rgba(255, 255, 255, .72)
+        }
+
+        .ico {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: #efd4f8
+        }
+
+        .detail b {
+            display: block;
+            margin-bottom: 2px
+        }
+
+        .detail small {
+            display: block;
+            color: #735a79;
+            line-height: 1.4
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 16px 0
+        }
+
+        .choice {
+            display: block;
+            text-align: left;
+            min-height: 100px;
+            color: #4f3158;
+            background: #fff;
+            border: 2px solid transparent
+        }
+
+        .choice.selected {
+            border-color: #a132c1;
+            background: linear-gradient(145deg, #fff, #fbecff);
+            box-shadow: 0 10px 28px rgba(144, 39, 176, .16)
+        }
+
+        .choice .big {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 5px
+        }
+
+        .choice span {
+            display: block;
+            font-size: 12px;
+            line-height: 1.25
+        }
+
+        .choice b {
+            font-size: 15px
+        }
+
+        .form-lock {
+            position: relative
+        }
+
+        .locked-note {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+            padding: 14px 15px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f5e7fa, #f2dcf9);
+            color: #6b4b75;
+            font-size: 13px;
+            font-weight: 750;
+            line-height: 1.45;
+            margin-bottom: 10px
+        }
+
+        .locked-note .lock-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            background: #fff;
+            color: #7c1f9d;
+            box-shadow: 0 7px 18px rgba(102, 26, 124, .10);
+            font-size: 17px
+        }
+
+        .locked-note .lock-copy {
+            min-width: 0
+        }
+
+        .locked-note .lock-copy strong {
+            color: #5f2b70;
+            font-weight: 900;
+            white-space: normal
+        }
+
+        .form-lock.ready .locked-note {
+            display: none
+        }
+
+        .form-fields {
+            transition: .3s ease
+        }
+
+        .form-lock:not(.ready) .form-fields {
+            filter: grayscale(.35);
+            opacity: .48;
+            pointer-events: none;
+            user-select: none
+        }
+
+        label {
+            display: block;
+            margin: 13px 0 6px;
+            color: #704b7d;
+            font-weight: 850;
+            font-size: 12px
+        }
+
+        .field {
+            position: relative
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 54px;
+            border: 1px solid #dec5e7;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #fff, #fdf8ff);
+            padding: 0 15px;
+            font: inherit;
+            outline: none;
+            color: #6f1e91;
+            font-weight: 750;
+            transition: .18s
+        }
+
+        input::placeholder {
+            color: #b28abd;
+            font-weight: 600
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #9c31bc;
+            box-shadow: 0 0 0 4px rgba(156, 49, 188, .11);
+            background: #fff
+        }
+
+        .select-wrap {
+            position: relative
+        }
+
+        .select-wrap:after {
+            content: "⌄";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-55%);
+            font-size: 23px;
+            color: #8e2dab;
+            pointer-events: none
+        }
+
+        .select-wrap select {
+            appearance: none;
+            padding-right: 45px;
+            background: linear-gradient(135deg, #fff 0, #faefff 100%);
+            border: 1px solid #d9b9e5;
+            box-shadow: 0 8px 18px rgba(103, 30, 126, .07)
+        }
+
+        .service-hint {
+            margin-top: 7px;
+            padding: 9px 11px;
+            border-radius: 13px;
+            background: #f5e8fb;
+            color: #76517f;
+            font-size: 11px;
+            line-height: 1.35
+        }
+
+        .online-note {
+            display: none;
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 14px;
+            background: #eaf0ff;
+            color: #3d58a6;
+            font-size: 12px
+        }
+
+        .online-note.show {
+            display: block
+        }
+
+        .submit {
+            width: 100%;
+            margin-top: 17px;
+            color: #fff;
+            background: linear-gradient(135deg, #771c98, #bd4edb);
+            box-shadow: 0 12px 27px rgba(111, 23, 138, .25)
+        }
+
+        .submit:disabled {
+            opacity: .55;
+            cursor: not-allowed
+        }
+
+        .status {
+            display: none;
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 15px;
+            font-size: 13px;
+            line-height: 1.45
+        }
+
+        .status.show {
+            display: block
+        }
+
+        .share-card {
+            text-align: center
+        }
+
+        .share-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #087bea, #7154ee);
+            color: #fff;
+            margin-top: 12px;
+            box-shadow: 0 12px 28px rgba(37, 97, 210, .2)
+        }
+
+        .share-sub {
+            font-size: 11px;
+            color: #78627e;
+            margin: 9px 0 0
+        }
+
+        .music {
+            position: fixed;
+            right: 14px;
+            bottom: 14px;
+            z-index: 30;
+            width: 48px;
+            height: 48px;
+            min-height: 48px;
+            border-radius: 50%;
+            padding: 0;
+            color: #fff;
+            background: rgba(75, 15, 94, .86);
+            box-shadow: 0 10px 25px rgba(45, 0, 56, .25);
+            backdrop-filter: blur(12px)
+        }
+
+        .music.on {
+            animation: pulseMusic 1.8s ease-in-out infinite
+        }
+
+        @keyframes pulseMusic {
+            50% {
+                box-shadow: 0 0 0 8px rgba(192, 90, 221, .12), 0 10px 25px rgba(45, 0, 56, .25)
+            }
+        }
+
+        .footer {
+            text-align: center;
+            color: #745d7a;
+            font-size: 11px;
+            padding: 4px 18px 24px
+        }
+
+        .footer b {
+            color: #701b8d
+        }
+
+        @media(min-width:760px) {
+            .shell {
+                padding: 30px
+            }
+
+            .layout {
+                display: grid;
+                grid-template-columns: minmax(380px, 520px) minmax(0, 1fr);
+                gap: 22px;
+                align-items: start
+            }
+
+            .hero {
+                position: sticky;
+                top: 30px;
+                border-radius: 32px;
+                max-height: calc(100vh - 60px);
+                min-height: 0;
+                aspect-ratio: 9/16;
+                box-shadow: 0 30px 80px rgba(54, 4, 69, .32)
+            }
+
+            .content {
+                padding: 0;
+                grid-template-columns: 1fr
+            }
+
+            .card {
+                padding: 26px
+            }
+
+            .hero-actions {
+                left: 22px;
+                right: 22px;
+                bottom: 22px
+            }
+
+            .countdown {
+                gap: 11px
+            }
+
+            .footer {
+                grid-column: 1/-1
+            }
+        }
+
+        @media(min-width:1100px) {
+            .content {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .intro,
+            .rsvp-card {
+                grid-column: 1/-1
+            }
+
+            .share-card {
+                grid-column: 1/-1
+            }
+
+            .details {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .detail {
+                min-height: 102px
+            }
+        }
+
+        @media(max-height:680px) and (orientation:landscape) {
+            .hero {
+                min-height: 480px
+            }
+
+            .shell {
+                width: min(100%, 1000px)
+            }
+        }
+
+        @media(max-width:480px) {
+            .content {
+                padding: 14px 12px;
+                gap: 14px
+            }
+
+            .card {
+                padding: 17px;
+                border-radius: 23px
+            }
+
+            .card h2 {
+                font-size: clamp(24px, 7.4vw, 31px)
+            }
+
+            .lead {
+                font-size: 14px;
+                line-height: 1.5
+            }
+
+            .choice-grid {
+                gap: 8px
+            }
+
+            .choice {
+                min-height: 92px;
+                padding: 11px 12px
+            }
+
+            .choice .big {
+                font-size: 25px
+            }
+
+            .locked-note {
+                grid-template-columns: 30px minmax(0, 1fr);
+                gap: 9px;
+                padding: 12px;
+                font-size: 12.5px
+            }
+
+            .locked-note .lock-icon {
+                width: 30px;
+                height: 30px
+            }
+
+            .countdown {
+                gap: 6px
+            }
+
+            .timebox {
+                padding: 12px 2px;
+                border-radius: 16px
+            }
+
+            .timebox strong {
+                font-size: clamp(22px, 7vw, 31px)
+            }
+
+            .hero-actions {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                gap: 8px
+            }
+
+            .hero-actions button {
+                min-height: 48px;
+                padding: 10px 9px;
+                font-size: 13px
+            }
+        }
+
+        @media(min-width:481px) and (max-width:759px) and (orientation:landscape) {
+            .hero {
+                aspect-ratio: 16/9;
+                min-height: 390px;
+                max-height: 78vh
+            }
+
+            .content {
+                padding: 18px
+            }
+
+            .choice-grid {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .locked-note {
+                font-size: 13px
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+
+            *,
+            *:before,
+            *:after {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glitter" aria-hidden="true" id="glitter"></div>
+    <audio id="bgMusic" src="goodbye_yesterday.mp3" loop preload="auto"></audio>
+    <button class="music" id="musicBtn" type="button" aria-label="Toggle background music" title="Music">♫</button>
+    <main class="shell">
+        <div class="layout">
+            <section class="hero" id="hero" aria-label="Event poster and map">
+                <div class="hero-media"><img src="poster.jpeg" alt="EMPOWERED event poster"><iframe class="map-view"
+                        title="Jesus Is Lord Taguig City map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        src="https://www.google.com/maps?q=Jesus+Is+Lord+Taguig+City+77+Sampaloc+Extension+Taguig+City&output=embed"></iframe>
+                </div>
+                <div class="hero-actions"><button class="primary" type="button"
+                        onclick="document.getElementById('rsvp').scrollIntoView({behavior:'smooth'})">✓ RSVP
+                        Now</button><button class="secondary" type="button" onclick="showMap()">⌖ Directions</button>
+                </div>
+            </section>
+            <div class="content">
+                <section class="card intro">
+                    <div class="eyebrow">33rd Anniversary Celebration</div>
+                    <h2>You're invited to be <span style="color:#9029b0">EMPOWERED.</span></h2>
+                    <p class="lead">Join Jesus Is Lord Taguig City as we celebrate 33 years of God's faithfulness —
+                        walking in discipline and living in breakthrough.</p>
+                    <div class="countdown" aria-label="Countdown to event">
+                        <div class="timebox"><strong id="days">--</strong><span>Days</span></div>
+                        <div class="timebox"><strong id="hours">--</strong><span>Hours</span></div>
+                        <div class="timebox"><strong id="mins">--</strong><span>Minutes</span></div>
+                        <div class="timebox"><strong id="secs">--</strong><span>Seconds</span></div>
+                    </div>
+                    <div class="details">
+                        <div class="detail">
+                            <div class="ico">📅</div>
+                            <div><b>August 30, 2026</b><small>Sunday • First Service 8:00 AM • Second Service 2:00
+                                    PM</small></div>
+                        </div>
+                        <div class="detail">
+                            <div class="ico">📍</div>
+                            <div><b>Jesus Is Lord Taguig City</b><small>#77 Sampaloc Extension, Taguig City</small>
+                            </div>
+                        </div>
+                        <div class="detail">
+                            <div class="ico">📖</div>
+                            <div><b>2 Timothy 1:7</b><small>For God has not given us a spirit of fear, but of power and
+                                    of love and of a sound mind.</small></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="card rsvp-card" id="rsvp">
+                    <div class="eyebrow">RSVP</div>
+                    <h2 style="font-size:28px">How will you join us?</h2>
+                    <p class="lead">Choose your attendance type first. Your details will unlock after you choose.</p>
+                    <div class="choice-grid"><button class="choice" id="inPersonBtn" type="button"
+                            onclick="chooseAttendance('In Person')"><span class="big">⛪</span><b>In Person</b><span>I'll
+                                join at the venue</span></button><button class="choice" id="onlineBtn" type="button"
+                            onclick="chooseAttendance('Online')"><span class="big">💻</span><b>Online</b><span>I'll join
+                                through the online service</span></button></div>
+                    <form id="rsvpForm"><input type="hidden" id="attendance">
+                        <div class="form-lock" id="formLock">
+                            <div class="locked-note"><span class="lock-icon" aria-hidden="true">🔒</span><span
+                                    class="lock-copy">Select <strong>In Person</strong> or <strong>Online</strong> above
+                                    to enter your RSVP details.</span></div>
+                            <div class="form-fields">
+                                <fieldset id="detailsFieldset" disabled style="border:0;padding:0;margin:0"><label
+                                        for="name">Full name</label>
+                                    <div class="field"><input id="name" autocomplete="name"
+                                            placeholder="Type your full name" required></div><label for="contact">Mobile
+                                        number or email</label>
+                                    <div class="field"><input id="contact" autocomplete="email"
+                                            placeholder="09XX XXX XXXX or name@email.com" required></div>
+                                    <div id="serviceWrap"><label for="service">Preferred service</label>
+                                        <div class="select-wrap"><select id="service">
+                                                <option value="8:00 AM">☀ First Service — 8:00 AM</option>
+                                                <option value="2:00 PM">✨ Second Service — 2:00 PM</option>
+                                            </select></div>
+                                        <div class="service-hint" id="serviceHint">Morning celebration • First Service
+                                            starts at 8:00 AM.</div>
+                                    </div>
+                                    <div class="online-note" id="onlineNote">Online access details can be shared by the
+                                        church once available.</div><button class="submit" id="submitBtn"
+                                        type="submit">Confirm RSVP</button>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="status" id="status"></div>
+                    </form>
+                </section>
+                <section class="card share-card">
+                    <div class="eyebrow">Invite Someone</div>
+                    <h2 style="font-size:25px">Share with your friends</h2>
+                    <p class="lead">Send this invitation through Messenger or your phone's share menu.</p><button
+                        class="share-btn" type="button" onclick="shareInvitation()">💬 Share to Messenger</button>
+                    <p class="share-sub">On supported phones, Messenger opens directly. Otherwise your device's share
+                        menu will appear.</p>
+                </section>
+            </div>
+        </div>
+        <footer class="footer"><b>Jesus Is Lord Taguig City • 33 Years</b><br>EMPOWERED — Walking in Discipline. Living
+            in Breakthrough.</footer>
+    </main>
+    <script>
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCzSV8m-OhtXRsIpSMmqwHPcz168MKp8lKjIPk42vn5Ek1Q-SVoewq259q1p8mMacCvg/exec";
+        const EVENT_TIME = new Date("2026-08-30T08:00:00+08:00").getTime(); let previous = {};
+        function updateCountdown() { let d = Math.max(0, EVENT_TIME - Date.now()), v = { days: Math.floor(d / 86400000), hours: Math.floor((d % 86400000) / 3600000), mins: Math.floor((d % 3600000) / 60000), secs: Math.floor((d % 60000) / 1000) }; Object.entries(v).forEach(([id, val]) => { const el = document.getElementById(id), txt = id === 'days' ? String(val) : String(val).padStart(2, '0'); if (previous[id] !== txt) { el.textContent = txt; el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); previous[id] = txt } }) } updateCountdown(); setInterval(updateCountdown, 1000);
+        function chooseAttendance(type) { document.getElementById('attendance').value = type; document.getElementById('inPersonBtn').classList.toggle('selected', type === 'In Person'); document.getElementById('onlineBtn').classList.toggle('selected', type === 'Online'); document.getElementById('formLock').classList.add('ready'); document.getElementById('detailsFieldset').disabled = false; document.getElementById('serviceWrap').style.display = type === 'Online' ? 'none' : 'block'; document.getElementById('onlineNote').classList.toggle('show', type === 'Online'); setTimeout(() => document.getElementById('name').focus({ preventScroll: true }), 180) }
+        document.getElementById('service').addEventListener('change', e => { document.getElementById('serviceHint').textContent = e.target.value === '8:00 AM' ? 'Morning celebration • First Service starts at 8:00 AM.' : 'Afternoon celebration • Second Service starts at 2:00 PM.' });
+        document.getElementById('rsvpForm').addEventListener('submit', async e => { e.preventDefault(); const attendance = document.getElementById('attendance').value, status = document.getElementById('status'), btn = document.getElementById('submitBtn'); if (!attendance) return; const entry = { name: document.getElementById('name').value.trim(), contact: document.getElementById('contact').value.trim(), attendance, service: attendance === 'In Person' ? document.getElementById('service').value : 'Online', submittedAt: new Date().toISOString(), source: 'EMPOWERED Invitation Website' }; btn.disabled = true; btn.textContent = 'Sending RSVP…'; status.classList.remove('show'); try { const res = await fetch(GOOGLE_APPS_SCRIPT_URL, { method: 'POST', body: new URLSearchParams(entry) }), text = await res.text(); let result = {}; try { result = JSON.parse(text) } catch (_) { } if (!res.ok || result.ok === false) throw new Error(result.message || 'Could not save RSVP'); status.style.background = '#ebf9ef'; status.style.color = '#2d7048'; status.className = 'status show'; status.innerHTML = `✓ Thank you, <b>${esc(entry.name)}</b>! Your <b>${esc(entry.attendance)}</b> RSVP was submitted successfully.` } catch (err) { console.error(err); status.style.background = '#fff0f2'; status.style.color = '#8a3341'; status.className = 'status show'; status.textContent = 'We could not send your RSVP. Please check your connection and try again.' } finally { btn.disabled = false; btn.textContent = 'Confirm RSVP' } });
+        function esc(s) { return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m])) }
+        let mapTimer; function showMap() { document.getElementById('hero').classList.add('show-map'); resetMapTimer() } function resetMapTimer() { if (!document.getElementById('hero').classList.contains('show-map')) return; clearTimeout(mapTimer); mapTimer = setTimeout(() => document.getElementById('hero').classList.remove('show-map'), 5000) } ['pointerdown', 'touchstart', 'wheel', 'keydown', 'scroll'].forEach(evt => document.addEventListener(evt, resetMapTimer, { passive: true }));
+        async function shareInvitation() { const url = location.href.split('#')[0], text = 'You are invited to EMPOWERED — Jesus Is Lord Taguig City 33 Years on August 30, 2026.'; const messenger = `fb-messenger://share/?link=${encodeURIComponent(url)}`; const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); if (mobile) { location.href = messenger; setTimeout(async () => { if (document.visibilityState === 'visible' && navigator.share) { try { await navigator.share({ title: 'EMPOWERED — JIL Taguig City 33 Years', text, url }) } catch (_) { } } }, 900) } else if (navigator.share) { try { await navigator.share({ title: 'EMPOWERED — JIL Taguig City 33 Years', text, url }) } catch (_) { } } else { await navigator.clipboard.writeText(url); alert('Invitation link copied. You can paste it into Messenger.') } }
+        const audio = document.getElementById('bgMusic'), musicBtn = document.getElementById('musicBtn'); audio.volume = .42; async function startMusic() { try { await audio.play(); musicBtn.classList.add('on'); musicBtn.textContent = '♪' } catch (_) { musicBtn.textContent = '♫' } } startMusic(); document.addEventListener('pointerdown', () => { if (audio.paused) startMusic() }, { once: true }); musicBtn.addEventListener('click', e => { e.stopPropagation(); if (audio.paused) startMusic(); else { audio.pause(); musicBtn.classList.remove('on'); musicBtn.textContent = '♫' } });
+        const glitter = document.getElementById('glitter'); for (let i = 0; i < 34; i++) { const s = document.createElement('i'); s.className = 'spark'; s.style.left = Math.random() * 100 + '%'; s.style.top = Math.random() * 100 + '%'; s.style.setProperty('--d', (1.6 + Math.random() * 3.4) + 's'); s.style.setProperty('--delay', (-Math.random() * 4) + 's'); s.style.width = s.style.height = (2 + Math.random() * 4) + 'px'; glitter.appendChild(s) }; for (let i = 0; i < 24; i++) { const f = document.createElement('span'); f.className = 'snow'; f.textContent = Math.random() > .45 ? '✦' : '•'; f.style.left = Math.random() * 100 + '%'; f.style.fontSize = (7 + Math.random() * 11) + 'px'; f.style.setProperty('--fall', (8 + Math.random() * 10) + 's'); f.style.setProperty('--delay', (-Math.random() * 16) + 's'); f.style.setProperty('--drift', ((Math.random() - .5) * 110) + 'px'); f.style.opacity = (.35 + Math.random() * .55); glitter.appendChild(f) }
+    </script>
+</body>
+
+</html>
