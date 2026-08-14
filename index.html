@@ -682,12 +682,25 @@ input:focus,select:focus {
     scroll-behavior:auto!important
   }
 }
+
+/* ===== Celebration upgrade: sparkling RSVP + fireworks ===== */
+:root{--gold:#ffd66b;--rose:#ff8fd8;--violet:#b766ff;--night:#2d073c}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;background:radial-gradient(circle at 18% 22%,rgba(255,214,107,.18),transparent 18%),radial-gradient(circle at 82% 12%,rgba(255,143,216,.16),transparent 20%),radial-gradient(circle at 76% 76%,rgba(183,102,255,.16),transparent 24%);mix-blend-mode:screen}
+.fireworks-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:18}.firework{--x:50vw;--y:30vh;--size:130px;--delay:0s;position:absolute;left:var(--x);top:var(--y);width:var(--size);height:var(--size);transform:translate(-50%,-50%);opacity:0;animation:fireworkBurst 5.6s ease-out infinite;animation-delay:var(--delay);filter:drop-shadow(0 0 6px rgba(255,255,255,.5))}.firework i{position:absolute;left:50%;top:50%;width:5px;height:42%;border-radius:999px;transform-origin:50% 100%;background:linear-gradient(to top,rgba(255,255,255,0),rgba(255,255,255,.95) 44%,var(--c,#ffd66b));box-shadow:0 0 9px var(--c,#ffd66b);opacity:0;animation:fireworkRay 5.6s ease-out infinite;animation-delay:var(--delay)}
+@keyframes fireworkBurst{0%,7%{opacity:0;transform:translate(-50%,-50%) scale(.15)}10%{opacity:1}28%{opacity:.95;transform:translate(-50%,-50%) scale(1)}45%,100%{opacity:0;transform:translate(-50%,-50%) scale(1.12)}}@keyframes fireworkRay{0%,8%{opacity:0;height:6%}12%{opacity:1}28%{opacity:1;height:42%}44%,100%{opacity:0;height:48%}}
+.rsvp-card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.8);box-shadow:0 28px 75px rgba(80,6,102,.28),0 0 0 1px rgba(255,214,107,.18) inset}.rsvp-card:before{content:"";position:absolute;inset:-2px;border-radius:inherit;padding:2px;background:linear-gradient(120deg,rgba(255,214,107,.85),rgba(255,255,255,.35),rgba(255,143,216,.75),rgba(183,102,255,.9),rgba(255,214,107,.85));background-size:250% 250%;animation:borderGlow 6s linear infinite;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}.rsvp-card:after{content:"✦  ✧  ✦";position:absolute;right:20px;top:15px;color:#a132c1;letter-spacing:.35em;font-size:15px;text-shadow:0 0 10px rgba(161,50,193,.35);animation:miniTwinkle 2.2s ease-in-out infinite alternate}@keyframes borderGlow{to{background-position:250% 50%}}@keyframes miniTwinkle{from{opacity:.35;transform:scale(.96)}to{opacity:1;transform:scale(1.08)}}
+.rsvp-card h2{background:linear-gradient(90deg,#6f1e91,#b63bd3 48%,#8a2bb7);-webkit-background-clip:text;background-clip:text;color:transparent}.choice{position:relative;overflow:hidden;transition:transform .2s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease}.choice:before{content:"";position:absolute;inset:-70% -30%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.92) 50%,transparent 58%);transform:translateX(-55%) rotate(8deg);transition:transform .65s ease}.choice:hover:before,.choice.selected:before{transform:translateX(55%) rotate(8deg)}.choice:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(144,39,176,.14)}.choice.selected{transform:translateY(-2px) scale(1.01)}.choice.selected .big{animation:choicePop .45s cubic-bezier(.2,.8,.2,1)}@keyframes choicePop{0%{transform:scale(.75) rotate(-8deg)}70%{transform:scale(1.14) rotate(4deg)}100%{transform:none}}
+.submit{position:relative;overflow:hidden;isolation:isolate;letter-spacing:.01em}.submit:before{content:"";position:absolute;inset:-1px;z-index:-2;background:linear-gradient(110deg,#6e168f,#c24cdd 40%,#ff9fdf 58%,#8d2bb7 78%,#6e168f);background-size:220% 100%;animation:submitFlow 3.8s linear infinite}.submit:after{content:"✨";position:absolute;right:16px;top:50%;transform:translateY(-50%);filter:drop-shadow(0 0 5px rgba(255,255,255,.8));animation:submitSpark 1.8s ease-in-out infinite}@keyframes submitFlow{to{background-position:220% 0}}@keyframes submitSpark{50%{transform:translateY(-50%) rotate(24deg) scale(1.2)}}
+.celebrate-flash{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0;background:radial-gradient(circle at center,rgba(255,255,255,.78) 0,rgba(255,214,107,.24) 18%,transparent 48%)}.celebrate-flash.go{animation:celebrateFlash .8s ease-out}@keyframes celebrateFlash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}.confetti-piece{position:fixed;z-index:61;pointer-events:none;width:7px;height:12px;border-radius:2px;background:var(--cc,#ffd66b);left:50%;top:55%;box-shadow:0 0 8px rgba(255,255,255,.65);animation:confettiFly 1.25s cubic-bezier(.16,.76,.28,1) forwards}@keyframes confettiFly{from{transform:translate(-50%,-50%) translate(0,0) rotate(0);opacity:1}to{transform:translate(-50%,-50%) translate(var(--tx),var(--ty)) rotate(var(--rot));opacity:0}}
+@media(max-width:480px){.firework{--size:92px}.rsvp-card:after{right:12px;top:10px;font-size:12px}}@media(prefers-reduced-motion:reduce){.fireworks-layer{display:none}.rsvp-card:before,.rsvp-card:after,.submit:before,.submit:after{animation:none!important}}
   </style>
  </head>
  <body>
+  <div aria-hidden="true" class="fireworks-layer" id="fireworksLayer"></div>
+  <div aria-hidden="true" class="celebrate-flash" id="celebrateFlash"></div>
   <div aria-hidden="true" class="glitter" id="glitter">
   </div>
-  <audio id="bgMusic" autoplay loop preload="auto" src="goodbye_yesterday.mp3">
+  <audio id="bgMusic" autoplay loop preload="auto" src="dwell.mp3">
   </audio>
   <button aria-label="Toggle background music" class="music" id="musicBtn" title="Music" type="button">
    ♫
@@ -721,7 +734,7 @@ input:focus,select:focus {
        </span>
       </h2>
       <p class="lead">
-       Join Jesus Is Lord Taguig City as we celebrate 33 years of God's faithfulness &mdash; walking in discipline and living in breakthrough.
+       Join Jesus Is Lord Taguig City as we celebrate 33 years of God's faithfulness walking in discipline and living in breakthrough.
       </p>
       <div aria-label="Countdown to event" class="countdown">
        <div class="timebox">
@@ -925,7 +938,7 @@ input:focus,select:focus {
    </footer>
   </main>
   <script>
-   const GOOGLE_APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbyCzSV8m-OhtXRsIpSMmqwHPcz168MKp8lKjIPk42vn5Ek1Q-SVoewq259q1p8mMacCvg/exec";
+   const GOOGLE_APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxRC50UPIJ1iKrT9eTmChjvBLaxQbEmj4qxY39iu01a0iJINAiRZm13ICor0KrsaKJ72w/exec";
 const EVENT_TIME=new Date("2026-08-30T08:00:00+08:00").getTime();
 let previous= {
 };
@@ -967,7 +980,7 @@ document.getElementById('rsvpForm').addEventListener('submit',async e=> {
       result=JSON.parse(text)
     } catch(_) {
     }
-    if(!res.ok||result.ok===false)throw new Error(result.message||'Could not save RSVP'); status.style.background='#ebf9ef'; status.style.color='#2d7048'; status.className='status show'; status.innerHTML=`✓ Thank you, <b>${esc(entry.name)}</b>! Your <b>${esc(entry.attendance)}</b> RSVP was submitted successfully.`
+    if(!res.ok||result.ok===false)throw new Error(result.message||'Could not save RSVP'); status.style.background='#ebf9ef'; status.style.color='#2d7048'; status.className='status show'; status.innerHTML=`✓ Thank you, <b>${esc(entry.name)}</b>! Your <b>${esc(entry.attendance)}</b> RSVP was submitted successfully.`; celebrateRSVP()
   } catch(err) {
     console.error(err); status.style.background='#fff0f2'; status.style.color='#8a3341'; status.className='status show'; status.textContent='We could not send your RSVP. Please check your connection and try again.'
   } finally {
@@ -1088,6 +1101,12 @@ musicBtn.addEventListener("click", event => {
 });
 
 const glitter=document.getElementById('glitter');for(let i=0;i<34;i++){const s=document.createElement('i');s.className='spark';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.setProperty('--d',(1.6+Math.random()*3.4)+'s');s.style.setProperty('--delay',(-Math.random()*4)+'s');s.style.width=s.style.height=(2+Math.random()*4)+'px';glitter.appendChild(s)};for(let i=0;i<24;i++){const f=document.createElement('span');f.className='snow';f.textContent=Math.random()>.45?'✦':'•';f.style.left=Math.random()*100+'%';f.style.fontSize=(7+Math.random()*11)+'px';f.style.setProperty('--fall',(8+Math.random()*10)+'s');f.style.setProperty('--delay',(-Math.random()*16)+'s');f.style.setProperty('--drift',((Math.random()-.5)*110)+'px');f.style.opacity=(.35+Math.random()*.55);glitter.appendChild(f)}
+
+// Decorative fireworks: lightweight DOM/CSS particles only.
+const fireworksLayer=document.getElementById('fireworksLayer');
+const fireworkPalette=['#ffd66b','#ff9fdf','#eac7ff','#ffffff','#b766ff'];
+[{x:'14vw',y:'20vh',s:'120px',d:'0s'},{x:'86vw',y:'28vh',s:'145px',d:'1.9s'},{x:'72vw',y:'68vh',s:'110px',d:'3.6s'},{x:'24vw',y:'76vh',s:'95px',d:'4.7s'}].forEach((cfg,idx)=>{const fw=document.createElement('div');fw.className='firework';fw.style.setProperty('--x',cfg.x);fw.style.setProperty('--y',cfg.y);fw.style.setProperty('--size',cfg.s);fw.style.setProperty('--delay',cfg.d);for(let i=0;i<14;i++){const ray=document.createElement('i');ray.style.setProperty('--c',fireworkPalette[(i+idx)%fireworkPalette.length]);ray.style.transform=`translate(-50%,-100%) rotate(${(360/14)*i}deg)`;fw.appendChild(ray)}fireworksLayer.appendChild(fw)});
+function celebrateRSVP(){if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const flash=document.getElementById('celebrateFlash');flash.classList.remove('go');void flash.offsetWidth;flash.classList.add('go');const colors=['#ffd66b','#ff8fd8','#b766ff','#ffffff','#d995ff'];for(let i=0;i<52;i++){const c=document.createElement('span');c.className='confetti-piece';c.style.setProperty('--cc',colors[i%colors.length]);const angle=(Math.PI*2*i/52)+(Math.random()*.18-.09),dist=90+Math.random()*260;c.style.setProperty('--tx',`${Math.cos(angle)*dist}px`);c.style.setProperty('--ty',`${Math.sin(angle)*dist-40}px`);c.style.setProperty('--rot',`${Math.random()*720-360}deg`);c.style.left=(50+(Math.random()*8-4))+'%';c.style.top=(56+(Math.random()*5-2.5))+'%';document.body.appendChild(c);setTimeout(()=>c.remove(),1400)}}
   </script>
  </body>
 </html>

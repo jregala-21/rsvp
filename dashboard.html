@@ -233,6 +233,85 @@ tbody tr:hover {
 .error.show {
   display:block
 }
+
+.togglebar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:0 0 12px
+}
+.toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  font-size:12px;
+  font-weight:850;
+  color:#6d4d76;
+  background:#f9f1fb;
+  border:1px solid #e5d3ec;
+  padding:9px 12px;
+  border-radius:999px;
+  user-select:none
+}
+.toggle input{
+  appearance:none;
+  width:42px;
+  height:24px;
+  border-radius:999px;
+  background:#d8c5df;
+  position:relative;
+  outline:none;
+  cursor:pointer;
+  transition:.2s ease
+}
+.toggle input:before{
+  content:"";
+  position:absolute;
+  width:18px;
+  height:18px;
+  top:3px;
+  left:3px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 7px rgba(60,18,72,.2);
+  transition:.2s ease
+}
+.toggle input:checked{
+  background:linear-gradient(135deg,#7b209a,#b84bd5)
+}
+.toggle input:checked:before{
+  transform:translateX(18px)
+}
+.dup-count{
+  font-size:11px;
+  color:#7b627f
+}
+.delete-btn{
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:10px;
+  background:#fff0f2;
+  color:#a1364c;
+  cursor:pointer;
+  font-size:16px;
+  display:grid;
+  place-items:center;
+  transition:.18s ease
+}
+.delete-btn:hover{
+  background:#ffdfe5;
+  transform:translateY(-1px)
+}
+.delete-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+  transform:none
+}
+.dup-row{
+  background:#fff9ee
+}
 @media(max-width:700px) {
   .wrap {
     padding:11px
@@ -395,7 +474,10 @@ async function loadData() {
   } catch(err) {
     console.error(err);
     const e=document.getElementById('error');
-    e.textContent='Live data could not be loaded. Check the Apps Script deployment.';
+    const msg=String(err && err.message ? err.message : err);
+    e.textContent=msg.includes('HTTP') || msg.includes('fetch') || msg.includes('JSON')
+      ? 'Live data could not be loaded. Check the Apps Script deployment or network connection.'
+      : 'Dashboard error: '+msg;
     e.classList.add('show');
     document.getElementById('status').textContent='Last update attempt: '+new Date().toLocaleTimeString()
   } finally {
@@ -407,18 +489,94 @@ function updateStats(s) {
   document.getElementById('inPerson').textContent=s?.inPerson??records.filter(r=>norm(r.attendance)==='in person').length;
   document.getElementById('online').textContent=s?.online??records.filter(r=>norm(r.attendance)==='online').length
 }
+function duplicateNameKeys() {
+  const counts=new Map();
+  records.forEach(r=>{
+    const key=normName(r.name);
+    if(!key)return;
+    counts.set(key,(counts.get(key)||0)+1)
+  });
+  return new Set([...counts.entries()].filter(([,count])=>count>1).map(([key])=>key))
+}
+
+function normName(v) {
+  return String(v||'').trim().toLowerCase().replace(/\s+/g,' ')
+}
+
 function render() {
-  const q=document.getElementById('search').value.trim().toLowerCase(),f=records.filter(r=>!q||[r.name,r.contact,r.attendance,r.service].join(' ').toLowerCase().includes(q)),tbody=document.getElementById('rows'),empty=document.getElementById('empty');
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const duplicateKeys=duplicateNameKeys();
+  const duplicatesToggle=document.getElementById('duplicatesOnly');
+  const duplicatesOnly=duplicatesToggle ? duplicatesToggle.checked : false;
+  const duplicateEntryCount=records.filter(r=>duplicateKeys.has(normName(r.name))).length;
+  const dupCountEl=document.getElementById('dupCount');
+  if(dupCountEl){
+    dupCountEl.textContent=duplicateEntryCount+' duplicate-name '+(duplicateEntryCount===1?'entry':'entries');
+  }
+
+  const f=records.filter(r=>{
+    const matchesSearch=!q||[r.name,r.contact,r.attendance,r.service].join(' ').toLowerCase().includes(q);
+    const matchesDuplicate=!duplicatesOnly||duplicateKeys.has(normName(r.name));
+    return matchesSearch&&matchesDuplicate
+  });
+
+  const tbody=document.getElementById('rows'),empty=document.getElementById('empty');
   tbody.innerHTML='';
+
   if(!f.length) {
     empty.style.display='block';
-    empty.textContent=records.length?'No matching guests found.':'No RSVP responses yet.';
+    if(duplicatesOnly){
+      empty.textContent=records.length?'No duplicate names found.':'No RSVP responses yet.'
+    }else{
+      empty.textContent=records.length?'No matching guests found.':'No RSVP responses yet.'
+    }
     return
   }
+
   empty.style.display='none';
-  f.forEach((r,i)=> {
-    const tr=document.createElement('tr'),a=String(r.attendance||''),c=norm(a)==='online'?'online':'person'; tr.innerHTML=`<td>${i+1}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.contact)}</td><td><span class="badge ${c}">${esc(a)}</span></td><td>${esc(formatService(r.service))}</td><td>${esc(formatDate(r.receivedAt||r.submittedAt))}</td>`; tbody.appendChild(tr)
+
+  f.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    const a=String(r.attendance||'');
+    const c=norm(a)==='online'?'online':'person';
+    const isDuplicate=duplicateKeys.has(normName(r.name));
+    if(isDuplicate)tr.classList.add('dup-row');
+
+    const rowNumber=Number(r.rowNumber||0);
+    tr.innerHTML=`<td>${i+1}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.contact)}</td><td><span class="badge ${c}">${esc(a)}</span></td><td>${esc(formatService(r.service))}</td><td>${esc(formatDate(r.receivedAt||r.submittedAt))}</td><td><button class="delete-btn" type="button" title="Delete ${esc(r.name)}" aria-label="Delete ${esc(r.name)}" ${rowNumber?'':'disabled'} onclick="deleteRsvp(${rowNumber}, this)">🗑</button></td>`;
+    tbody.appendChild(tr)
   })
+}
+
+async function deleteRsvp(rowNumber,button) {
+  if(!rowNumber)return;
+  const record=records.find(r=>Number(r.rowNumber)===Number(rowNumber));
+  const label=record?.name||'this RSVP';
+  if(!confirm('Delete '+label+'? This cannot be undone.'))return;
+
+  button.disabled=true;
+  const oldText=button.textContent;
+  button.textContent='…';
+
+  try{
+    const body=new URLSearchParams({
+      action:'delete',
+      rowNumber:String(rowNumber)
+    });
+    const r=await fetch(GOOGLE_APPS_SCRIPT_URL,{
+      method:'POST',
+      body
+    });
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    if(data.ok===false)throw new Error(data.message||'Could not delete RSVP');
+    await loadData()
+  }catch(err){
+    console.error(err);
+    alert('Could not delete the RSVP. Please try again.');
+    button.disabled=false;
+    button.textContent=oldText
+  }
 }
 
 function formatService(value) {
