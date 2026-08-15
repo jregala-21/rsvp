@@ -944,6 +944,9 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;back
       <button class="share-btn" onclick="shareInvitation()" type="button">
        💬 Share to Messenger
       </button>
+      <a class="btn" href="frame-maker.html" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#7b209a,#bd4fda);color:#fff;box-shadow:0 12px 28px rgba(111,23,138,.20)">
+       🖼 Create Anniversary Frame
+      </a>
       <p class="share-sub">
        On supported phones, Messenger opens directly. Otherwise your device's share menu will appear.
       </p>
@@ -1011,7 +1014,7 @@ document.getElementById('rsvpForm').addEventListener('submit',async e=> {
 function esc(s) {
   return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot; ',"'":'&#039;'}[m]))}
 let mapTimer;function showMap(){document.getElementById('hero').classList.add('show-map');resetMapTimer()}function resetMapTimer(){if(!document.getElementById('hero').classList.contains('show-map'))return;clearTimeout(mapTimer);mapTimer=setTimeout(()=>document.getElementById('hero').classList.remove('show-map'),5000)}['pointerdown','touchstart','wheel','keydown','scroll'].forEach(evt=>document.addEventListener(evt,resetMapTimer,{passive:true}));
-async function shareInvitation(){const url=location.href.split('#')[0],text='You are invited to be EMPOWERED at Jesus Is Lord Church Taguig City 33 Years on August 30, 2026.';const messenger=`fb-messenger://share/?link=${encodeURIComponent(url)}`;const mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);if(mobile){location.href=messenger;setTimeout(async()=>{if(document.visibilityState==='visible'&&navigator.share){try{await navigator.share({title:'EMPOWERED — JIL Taguig City 33 Years',text,url})}catch(_){}}},900)}else if(navigator.share){try{await navigator.share({title:'EMPOWERED — JIL Taguig City 33 Years',text,url})}catch(_){}}else{await navigator.clipboard.writeText(url);alert('Invitation link copied. You can paste it into Messenger.')}}
+async function shareInvitation(){const url=location.href.split('#')[0],text='You are invited to EMPOWERED — Jesus Is Lord Taguig City 33 Years on August 30, 2026.';const messenger=`fb-messenger://share/?link=${encodeURIComponent(url)}`;const mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);if(mobile){location.href=messenger;setTimeout(async()=>{if(document.visibilityState==='visible'&&navigator.share){try{await navigator.share({title:'EMPOWERED — JIL Taguig City 33 Years',text,url})}catch(_){}}},900)}else if(navigator.share){try{await navigator.share({title:'EMPOWERED — JIL Taguig City 33 Years',text,url})}catch(_){}}else{await navigator.clipboard.writeText(url);alert('Invitation link copied. You can paste it into Messenger.')}}
 
 const audio = document.getElementById("bgMusic");
 const musicBtn = document.getElementById("musicBtn");
