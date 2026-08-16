@@ -714,7 +714,220 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;back
 .submit{position:relative;overflow:hidden;isolation:isolate;letter-spacing:.01em}.submit:before{content:"";position:absolute;inset:-1px;z-index:-2;background:linear-gradient(110deg,#6e168f,#c24cdd 40%,#ff9fdf 58%,#8d2bb7 78%,#6e168f);background-size:220% 100%;animation:submitFlow 3.8s linear infinite}.submit:after{content:"✨";position:absolute;right:16px;top:50%;transform:translateY(-50%);filter:drop-shadow(0 0 5px rgba(255,255,255,.8));animation:submitSpark 1.8s ease-in-out infinite}@keyframes submitFlow{to{background-position:220% 0}}@keyframes submitSpark{50%{transform:translateY(-50%) rotate(24deg) scale(1.2)}}
 .celebrate-flash{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0;background:radial-gradient(circle at center,rgba(255,255,255,.78) 0,rgba(255,214,107,.24) 18%,transparent 48%)}.celebrate-flash.go{animation:celebrateFlash .8s ease-out}@keyframes celebrateFlash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}.confetti-piece{position:fixed;z-index:61;pointer-events:none;width:7px;height:12px;border-radius:2px;background:var(--cc,#ffd66b);left:50%;top:55%;box-shadow:0 0 8px rgba(255,255,255,.65);animation:confettiFly 1.25s cubic-bezier(.16,.76,.28,1) forwards}@keyframes confettiFly{from{transform:translate(-50%,-50%) translate(0,0) rotate(0);opacity:1}to{transform:translate(-50%,-50%) translate(var(--tx),var(--ty)) rotate(var(--rot));opacity:0}}
 @media(max-width:480px){.firework{--size:92px}.rsvp-card:after{right:12px;top:10px;font-size:12px}}@media(prefers-reduced-motion:reduce){.fireworks-layer{display:none}.rsvp-card:before,.rsvp-card:after,.submit:before,.submit:after{animation:none!important}}
-  </style>
+  
+/* ===== Single-page Frame Maker ===== */
+.frame-page{
+  display:none;
+  width:min(100%,980px);
+  margin:auto;
+  padding:18px;
+  position:relative;
+  z-index:22;
+}
+.frame-page.show{display:block}
+.frame-hero{
+  color:#fff;
+  background:linear-gradient(135deg,#6f178d,#bd4fda);
+  border-radius:30px;
+  padding:24px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative;
+  margin-bottom:16px;
+}
+.frame-hero:after{
+  content:"";
+  position:absolute;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  right:-70px;
+  top:-95px;
+  background:rgba(255,255,255,.12)
+}
+.frame-hero .eyebrow{color:#fff;opacity:.82}
+.frame-hero h1{
+  margin:8px 0;
+  font-size:clamp(31px,7vw,52px);
+  line-height:.98;
+  position:relative;
+  z-index:1
+}
+.frame-hero p{
+  margin:0;
+  max-width:680px;
+  line-height:1.55;
+  opacity:.9;
+  font-size:14px;
+  position:relative;
+  z-index:1
+}
+.frame-grid{display:grid;gap:16px}
+.frame-card{
+  background:var(--glass);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:18px;
+  backdrop-filter:blur(18px)
+}
+.frame-card h2{margin:0 0 6px;font-size:23px}
+.frame-lead{
+  margin:0 0 15px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55
+}
+.frame-stage{
+  width:min(100%,560px);
+  aspect-ratio:1/1;
+  margin:auto;
+  position:relative;
+  overflow:hidden;
+  border-radius:24px;
+  background:#eee;
+  box-shadow:0 14px 38px rgba(66,18,80,.16);
+  touch-action:none;
+  user-select:none
+}
+#frameCanvas{width:100%;height:100%;display:block}
+.frame-upload{
+  position:relative;
+  width:100%;
+  min-height:54px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  padding:12px 16px;
+  border-radius:17px;
+  background:linear-gradient(135deg,#7a1e99,#bd4fda);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 12px 28px rgba(111,23,138,.22)
+}
+.frame-upload input{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer
+}
+.frame-control{
+  margin-top:12px;
+  background:#fbf6fd;
+  border:1px solid #eadbef;
+  border-radius:16px;
+  padding:12px
+}
+.frame-control label{
+  display:flex;
+  justify-content:space-between;
+  color:#6b5071;
+  font-size:12px;
+  font-weight:850;
+  margin-bottom:8px
+}
+.frame-control input[type="range"]{width:100%;accent-color:#8a2bac}
+.frame-filter-title{
+  margin-top:14px;
+  font-size:12px;
+  font-weight:900;
+  color:#6b5071
+}
+.frame-filters{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:8px
+}
+.frame-filter-btn{
+  min-height:44px;
+  padding:9px 8px;
+  border:1px solid #e7d5ee;
+  border-radius:13px;
+  background:#fbf6fd;
+  color:#6b5071;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer
+}
+.frame-filter-btn.active{
+  color:#fff;
+  background:linear-gradient(135deg,#7b209a,#bd4fda);
+  border-color:transparent;
+  box-shadow:0 8px 18px rgba(111,23,138,.16)
+}
+.frame-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px
+}
+.frame-secondary{
+  background:#f3e5f8;
+  color:#6f218b
+}
+.frame-primary{
+  color:#fff;
+  background:linear-gradient(135deg,#731994,#c04fdd);
+  box-shadow:0 12px 28px rgba(111,23,138,.22)
+}
+.frame-primary:disabled,.frame-share:disabled{opacity:.5;cursor:not-allowed}
+.frame-share{
+  width:100%;
+  margin-top:10px;
+  color:#fff;
+  background:linear-gradient(135deg,#7b209a,#bd4fda);
+  box-shadow:0 12px 28px rgba(111,23,138,.20)
+}
+.frame-note{
+  margin-top:8px;
+  color:#7b627f;
+  font-size:11px;
+  line-height:1.45
+}
+.frame-tip{
+  margin-top:12px;
+  padding:12px;
+  border-radius:14px;
+  background:#f5eafb;
+  color:#76517f;
+  font-size:12px;
+  line-height:1.5
+}
+@media(min-width:840px){
+  .frame-grid{
+    grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
+    align-items:start
+  }
+  .frame-card{padding:22px}
+  .frame-controls-card{position:sticky;top:18px}
+}
+@media(max-width:520px){
+  .frame-page{padding:10px}
+  .frame-hero{border-radius:22px;padding:18px}
+  .frame-card{border-radius:22px;padding:14px}
+  .frame-stage{border-radius:18px}
+  .frame-actions{grid-template-columns:1fr}
+}
+
+
+.frame-copy-link{
+  width:100%;
+  margin-top:10px;
+  color:#6f218b;
+  background:#fff;
+  border:1px solid #dec9e6;
+  box-shadow:0 10px 24px rgba(100,28,122,.10)
+}
+.frame-copy-link.copied{
+  color:#26734d;
+  background:#ebf9ef;
+  border-color:#bfe4cc
+}
+
+</style>
  </head>
  <body>
   <div aria-hidden="true" class="fireworks-layer" id="fireworksLayer"></div>
@@ -944,9 +1157,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;back
       <button class="share-btn" onclick="shareInvitation()" type="button">
        💬 Share to Messenger
       </button>
-      <a class="btn" href="frame-maker.html" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#7b209a,#bd4fda);color:#fff;box-shadow:0 12px 28px rgba(111,23,138,.20)">
-       🖼 Create Anniversary Frame
-      </a>
+      <button class="btn" type="button" onclick="showFrameMaker(true)" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#7b209a,#bd4fda);color:#fff;box-shadow:0 12px 28px rgba(111,23,138,.20)">🖼 Create Anniversary Frame</button>
       <p class="share-sub">
        On supported phones, Messenger opens directly. Otherwise your device's share menu will appear.
       </p>
@@ -961,6 +1172,73 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;back
     EMPOWERED &mdash; Walking in Discipline. Living in Breakthrough.
    </footer>
   </main>
+
+  <section class="frame-page" id="framePage" aria-hidden="true">
+    <section class="frame-hero">
+      <div class="eyebrow">Jesus Is Lord Taguig City • 33 Years</div>
+      <h1>Create Your EMPOWERED Frame</h1>
+      <p>Upload your photo and it will fill the square behind the anniversary frame. Drag to reposition, zoom, add a filter, then download or share your finished image.</p>
+    </section>
+
+    <section class="frame-grid">
+      <div class="frame-card">
+        <h2>Your Photo</h2>
+        <p class="frame-lead">Drag directly on the preview to reposition your photo behind the frame.</p>
+        <div class="frame-stage" id="frameStage">
+          <canvas id="frameCanvas" width="1200" height="1200"></canvas>
+        </div>
+      </div>
+
+      <div class="frame-card frame-controls-card">
+        <h2>Customize</h2>
+        <p class="frame-lead">The transparent anniversary overlay uses <b>frame.png</b>.</p>
+
+        <label class="frame-upload">
+          📷 Choose Your Photo
+          <input id="framePhotoInput" type="file" accept="image/*"/>
+        </label>
+
+        <div class="frame-control">
+          <label for="frameZoomRange">
+            <span>Zoom</span>
+            <span id="frameZoomValue">100%</span>
+          </label>
+          <input id="frameZoomRange" type="range" min="100" max="260" value="100"/>
+        </div>
+
+        <div class="frame-filter-title">Add Filter</div>
+        <div class="frame-filters" id="frameFilters">
+          <button class="frame-filter-btn active" type="button" data-filter="none">Original</button>
+          <button class="frame-filter-btn" type="button" data-filter="vivid">Vivid</button>
+          <button class="frame-filter-btn" type="button" data-filter="warm">Warm</button>
+          <button class="frame-filter-btn" type="button" data-filter="cool">Cool</button>
+          <button class="frame-filter-btn" type="button" data-filter="mono">B&amp;W</button>
+          <button class="frame-filter-btn" type="button" data-filter="soft">Soft</button>
+        </div>
+
+        <div class="frame-actions">
+          <button class="frame-secondary" id="frameResetBtn" type="button">↺ Reset</button>
+          <button class="frame-primary" id="frameDownloadBtn" type="button" disabled>⬇ Download PNG</button>
+        </div>
+
+        <button class="frame-share" id="frameShareBtn" type="button" disabled>↗ Share Image</button>
+        <button class="frame-copy-link" id="frameCopyLinkBtn" type="button">🔗 Copy Anniversary Frame Link</button>
+        <div class="frame-note">Share Image uses your phone's native share sheet. Copy Link copies the direct Anniversary Frame URL.</div>
+
+        <div class="frame-tip"><b>Tip:</b> Use a square or portrait photo and keep your face near the center.</div>
+
+        <div class="frame-actions">
+          <button class="frame-secondary" type="button" onclick="showRSVP(true)">← Back to RSVP</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <b>EMPOWERED • JIL Taguig City 33rd Anniversary</b><br/>
+      Walking in Discipline. Living in Breakthrough.
+    </footer>
+  </section>
+
   <script>
    const GOOGLE_APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxRC50UPIJ1iKrT9eTmChjvBLaxQbEmj4qxY39iu01a0iJINAiRZm13ICor0KrsaKJ72w/exec";
 const EVENT_TIME=new Date("2026-08-30T08:00:00+08:00").getTime();
@@ -1023,6 +1301,14 @@ audio.muted = false;
 audio.defaultMuted = false;
 audio.volume = 0.55;
 
+/* Restart background music from the beginning after every full page refresh. */
+window.addEventListener("DOMContentLoaded", () => {
+  try {
+    audio.currentTime = 0;
+  } catch (_) {}
+});
+
+
 async function startMusic() {
   try {
     audio.muted = false;
@@ -1033,8 +1319,7 @@ async function startMusic() {
     musicBtn.classList.add("on");
     musicBtn.textContent = "♪";
     musicBtn.setAttribute("aria-label", "Pause background music");
-
-    return true;
+return true;
   } catch (error) {
     musicBtn.classList.remove("on");
     musicBtn.textContent = "♫";
@@ -1121,7 +1406,7 @@ musicBtn.addEventListener("click", event => {
     musicBtn.classList.remove("on");
     musicBtn.textContent = "♫";
     musicBtn.setAttribute("aria-label", "Play background music");
-  }
+}
 });
 
 const glitter=document.getElementById('glitter');for(let i=0;i<34;i++){const s=document.createElement('i');s.className='spark';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.setProperty('--d',(1.6+Math.random()*3.4)+'s');s.style.setProperty('--delay',(-Math.random()*4)+'s');s.style.width=s.style.height=(2+Math.random()*4)+'px';glitter.appendChild(s)};for(let i=0;i<24;i++){const f=document.createElement('span');f.className='snow';f.textContent=Math.random()>.45?'✦':'•';f.style.left=Math.random()*100+'%';f.style.fontSize=(7+Math.random()*11)+'px';f.style.setProperty('--fall',(8+Math.random()*10)+'s');f.style.setProperty('--delay',(-Math.random()*16)+'s');f.style.setProperty('--drift',((Math.random()-.5)*110)+'px');f.style.opacity=(.35+Math.random()*.55);glitter.appendChild(f)}
@@ -1131,6 +1416,713 @@ const fireworksLayer=document.getElementById('fireworksLayer');
 const fireworkPalette=['#ffd66b','#ff9fdf','#eac7ff','#ffffff','#b766ff'];
 [{x:'14vw',y:'20vh',s:'120px',d:'0s'},{x:'86vw',y:'28vh',s:'145px',d:'1.9s'},{x:'72vw',y:'68vh',s:'110px',d:'3.6s'},{x:'24vw',y:'76vh',s:'95px',d:'4.7s'}].forEach((cfg,idx)=>{const fw=document.createElement('div');fw.className='firework';fw.style.setProperty('--x',cfg.x);fw.style.setProperty('--y',cfg.y);fw.style.setProperty('--size',cfg.s);fw.style.setProperty('--delay',cfg.d);for(let i=0;i<14;i++){const ray=document.createElement('i');ray.style.setProperty('--c',fireworkPalette[(i+idx)%fireworkPalette.length]);ray.style.transform=`translate(-50%,-100%) rotate(${(360/14)*i}deg)`;fw.appendChild(ray)}fireworksLayer.appendChild(fw)});
 function celebrateRSVP(){if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const flash=document.getElementById('celebrateFlash');flash.classList.remove('go');void flash.offsetWidth;flash.classList.add('go');const colors=['#ffd66b','#ff8fd8','#b766ff','#ffffff','#d995ff'];for(let i=0;i<52;i++){const c=document.createElement('span');c.className='confetti-piece';c.style.setProperty('--cc',colors[i%colors.length]);const angle=(Math.PI*2*i/52)+(Math.random()*.18-.09),dist=90+Math.random()*260;c.style.setProperty('--tx',`${Math.cos(angle)*dist}px`);c.style.setProperty('--ty',`${Math.sin(angle)*dist-40}px`);c.style.setProperty('--rot',`${Math.random()*720-360}deg`);c.style.left=(50+(Math.random()*8-4))+'%';c.style.top=(56+(Math.random()*5-2.5))+'%';document.body.appendChild(c);setTimeout(()=>c.remove(),1400)}}
-  </script>
+  
+
+/* ===== Single-page RSVP <-> Frame Maker switching ===== */
+function showFrameMaker(updateHash=true){
+  const shell=document.querySelector('.shell');
+  const page=document.getElementById('framePage');
+
+  if(shell){
+    shell.style.display='none';
+  }
+
+  if(page){
+    page.classList.add('show');
+    page.setAttribute('aria-hidden','false');
+  }
+
+  if(updateHash && location.hash!=='#frame'){
+    history.pushState(null,'','#frame');
+  }
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showRSVP(updateHash=true){
+  const shell=document.querySelector('.shell');
+  const page=document.getElementById('framePage');
+
+  if(page){
+    page.classList.remove('show');
+    page.setAttribute('aria-hidden','true');
+  }
+
+  if(shell){
+    shell.style.display='';
+  }
+
+  if(updateHash && location.hash){
+    history.pushState(null,'',location.pathname+location.search);
+  }
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/*
+  Direct frame link:
+  https://rsvp.jilwanman.xyz/#frame
+*/
+function syncViewFromHash(){
+  if(location.hash.toLowerCase()==='#frame'){
+    showFrameMaker(false);
+  }else{
+    showRSVP(false);
+  }
+}
+
+window.addEventListener('DOMContentLoaded',syncViewFromHash);
+window.addEventListener('hashchange',syncViewFromHash);
+window.addEventListener('popstate',syncViewFromHash);
+
+/* ===== In-page Frame Maker ===== */
+const frameCanvas=document.getElementById('frameCanvas');
+const frameCtx=frameCanvas.getContext('2d',{willReadFrequently:true});
+const frameStage=document.getElementById('frameStage');
+const framePhotoInput=document.getElementById('framePhotoInput');
+const frameZoomRange=document.getElementById('frameZoomRange');
+const frameZoomValue=document.getElementById('frameZoomValue');
+const frameResetBtn=document.getElementById('frameResetBtn');
+const frameDownloadBtn=document.getElementById('frameDownloadBtn');
+const frameShareBtn=document.getElementById('frameShareBtn');
+const frameCopyLinkBtn=document.getElementById('frameCopyLinkBtn');
+const frameFilterButtons=[...document.querySelectorAll('.frame-filter-btn')];
+
+const frameOverlay=new Image();
+frameOverlay.src='frame.png';
+
+let framePhoto=null;
+let frameFilteredCanvas=null;
+let frameBaseScale=1;
+let frameZoom=1;
+let frameOffsetX=0;
+let frameOffsetY=0;
+let frameActiveFilter='none';
+let frameDragging=false;
+let frameLastX=0;
+let frameLastY=0;
+
+function frameDrawPlaceholder(){
+  frameCtx.clearRect(0,0,frameCanvas.width,frameCanvas.height);
+
+  const g=frameCtx.createLinearGradient(0,0,frameCanvas.width,frameCanvas.height);
+  g.addColorStop(0,'#f8effb');
+  g.addColorStop(1,'#ead5f2');
+
+  frameCtx.fillStyle=g;
+  frameCtx.fillRect(0,0,frameCanvas.width,frameCanvas.height);
+
+  frameCtx.fillStyle='#7c5c85';
+  frameCtx.textAlign='center';
+  frameCtx.font='700 48px system-ui,sans-serif';
+  frameCtx.fillText(
+    'Choose a photo to begin',
+    frameCanvas.width/2,
+    frameCanvas.height/2-12
+  );
+
+  frameCtx.font='400 30px system-ui,sans-serif';
+  frameCtx.fillText(
+    'Your frame will appear over your photo',
+    frameCanvas.width/2,
+    frameCanvas.height/2+48
+  );
+
+  if(frameOverlay.complete&&frameOverlay.naturalWidth){
+    frameCtx.drawImage(
+      frameOverlay,
+      0,
+      0,
+      frameCanvas.width,
+      frameCanvas.height
+    );
+  }
+}
+
+function frameCalculateBaseScale(){
+  if(!framePhoto)return;
+
+  frameBaseScale=Math.max(
+    frameCanvas.width/framePhoto.naturalWidth,
+    frameCanvas.height/framePhoto.naturalHeight
+  );
+}
+
+function frameClampOffsets(){
+  if(!framePhoto)return;
+
+  const scale=frameBaseScale*frameZoom;
+  const w=framePhoto.naturalWidth*scale;
+  const h=framePhoto.naturalHeight*scale;
+
+  const maxX=Math.max(0,(w-frameCanvas.width)/2);
+  const maxY=Math.max(0,(h-frameCanvas.height)/2);
+
+  frameOffsetX=Math.max(-maxX,Math.min(maxX,frameOffsetX));
+  frameOffsetY=Math.max(-maxY,Math.min(maxY,frameOffsetY));
+}
+
+function frameMakeFilteredPhoto(){
+  if(!framePhoto){
+    frameFilteredCanvas=null;
+    return;
+  }
+
+  const MAX_SIDE=1600;
+  const ratio=Math.min(
+    1,
+    MAX_SIDE/Math.max(
+      framePhoto.naturalWidth,
+      framePhoto.naturalHeight
+    )
+  );
+
+  const w=Math.max(
+    1,
+    Math.round(framePhoto.naturalWidth*ratio)
+  );
+
+  const h=Math.max(
+    1,
+    Math.round(framePhoto.naturalHeight*ratio)
+  );
+
+  const off=document.createElement('canvas');
+  off.width=w;
+  off.height=h;
+
+  const octx=off.getContext(
+    '2d',
+    {willReadFrequently:true}
+  );
+
+  octx.drawImage(framePhoto,0,0,w,h);
+
+  if(frameActiveFilter==='none'){
+    frameFilteredCanvas=off;
+    return;
+  }
+
+  const image=octx.getImageData(0,0,w,h);
+  const data=image.data;
+
+  for(let i=0;i<data.length;i+=4){
+    let r=data[i];
+    let g=data[i+1];
+    let b=data[i+2];
+
+    if(frameActiveFilter==='vivid'){
+      const avg=(r+g+b)/3;
+
+      r=avg+(r-avg)*1.34;
+      g=avg+(g-avg)*1.34;
+      b=avg+(b-avg)*1.34;
+
+      r=(r-128)*1.07+128;
+      g=(g-128)*1.07+128;
+      b=(b-128)*1.07+128;
+    }
+
+    else if(frameActiveFilter==='warm'){
+      r=r*1.08+10;
+      g=g*1.03+3;
+      b=b*.91;
+    }
+
+    else if(frameActiveFilter==='cool'){
+      r=r*.94;
+      g=g*1.02+2;
+      b=b*1.10+7;
+    }
+
+    else if(frameActiveFilter==='mono'){
+      const gray=.299*r+.587*g+.114*b;
+
+      r=(gray-128)*1.08+128;
+      g=r;
+      b=r;
+    }
+
+    else if(frameActiveFilter==='soft'){
+      const avg=(r+g+b)/3;
+
+      r=avg+(r-avg)*.88+9;
+      g=avg+(g-avg)*.88+9;
+      b=avg+(b-avg)*.88+9;
+
+      r=(r-128)*.93+128;
+      g=(g-128)*.93+128;
+      b=(b-128)*.93+128;
+    }
+
+    data[i]=Math.max(0,Math.min(255,r));
+    data[i+1]=Math.max(0,Math.min(255,g));
+    data[i+2]=Math.max(0,Math.min(255,b));
+  }
+
+  octx.putImageData(image,0,0);
+  frameFilteredCanvas=off;
+}
+
+function frameRender(){
+  frameCtx.clearRect(
+    0,
+    0,
+    frameCanvas.width,
+    frameCanvas.height
+  );
+
+  if(!framePhoto){
+    frameDrawPlaceholder();
+    return;
+  }
+
+  frameClampOffsets();
+
+  const source=
+    frameFilteredCanvas||framePhoto;
+
+  const sourceW=
+    source.width||framePhoto.naturalWidth;
+
+  const sourceH=
+    source.height||framePhoto.naturalHeight;
+
+  const scale=
+    frameBaseScale*frameZoom;
+
+  const w=
+    framePhoto.naturalWidth*scale;
+
+  const h=
+    framePhoto.naturalHeight*scale;
+
+  const x=
+    (frameCanvas.width-w)/2+frameOffsetX;
+
+  const y=
+    (frameCanvas.height-h)/2+frameOffsetY;
+
+  frameCtx.drawImage(
+    source,
+    0,
+    0,
+    sourceW,
+    sourceH,
+    x,
+    y,
+    w,
+    h
+  );
+
+  if(
+    frameOverlay.complete &&
+    frameOverlay.naturalWidth
+  ){
+    frameCtx.drawImage(
+      frameOverlay,
+      0,
+      0,
+      frameCanvas.width,
+      frameCanvas.height
+    );
+  }
+}
+
+frameOverlay.onload=frameRender;
+
+frameOverlay.onerror=()=>{
+  console.error(
+    'frame.png could not be loaded.'
+  );
+
+  frameRender();
+};
+
+framePhotoInput.addEventListener(
+  'change',
+  event=>{
+    const file=
+      event.target.files &&
+      event.target.files[0];
+
+    if(!file)return;
+
+    const objectUrl=
+      URL.createObjectURL(file);
+
+    const image=
+      new Image();
+
+    image.onload=()=>{
+      framePhoto=image;
+
+      frameZoom=1;
+      frameOffsetX=0;
+      frameOffsetY=0;
+      frameActiveFilter='none';
+
+      frameZoomRange.value=100;
+      frameZoomValue.textContent='100%';
+
+      frameFilterButtons.forEach(button=>{
+        button.classList.toggle(
+          'active',
+          button.dataset.filter==='none'
+        );
+      });
+
+      frameCalculateBaseScale();
+      frameMakeFilteredPhoto();
+      frameClampOffsets();
+
+      frameDownloadBtn.disabled=false;
+      frameShareBtn.disabled=false;
+
+      frameRender();
+
+      URL.revokeObjectURL(objectUrl);
+    };
+
+    image.onerror=()=>{
+      alert(
+        'The selected image could not be opened. Please try another JPG or PNG photo.'
+      );
+
+      URL.revokeObjectURL(objectUrl);
+    };
+
+    image.src=objectUrl;
+  }
+);
+
+frameZoomRange.addEventListener(
+  'input',
+  event=>{
+    frameZoom=
+      Number(event.target.value)/100;
+
+    frameZoomValue.textContent=
+      event.target.value+'%';
+
+    frameClampOffsets();
+    frameRender();
+  }
+);
+
+frameFilterButtons.forEach(button=>{
+  button.addEventListener(
+    'click',
+    ()=>{
+      if(!framePhoto)return;
+
+      frameActiveFilter=
+        button.dataset.filter||'none';
+
+      frameFilterButtons.forEach(item=>{
+        item.classList.toggle(
+          'active',
+          item===button
+        );
+      });
+
+      frameMakeFilteredPhoto();
+      frameRender();
+    }
+  );
+});
+
+frameResetBtn.addEventListener(
+  'click',
+  ()=>{
+    frameZoom=1;
+    frameOffsetX=0;
+    frameOffsetY=0;
+    frameActiveFilter='none';
+
+    frameZoomRange.value=100;
+    frameZoomValue.textContent='100%';
+
+    frameFilterButtons.forEach(button=>{
+      button.classList.toggle(
+        'active',
+        button.dataset.filter==='none'
+      );
+    });
+
+    if(framePhoto){
+      frameMakeFilteredPhoto();
+    }
+
+    frameRender();
+  }
+);
+
+function framePointerPosition(event){
+  const rect=
+    frameStage.getBoundingClientRect();
+
+  return{
+    x:
+      (event.clientX-rect.left) *
+      (frameCanvas.width/rect.width),
+
+    y:
+      (event.clientY-rect.top) *
+      (frameCanvas.height/rect.height)
+  };
+}
+
+frameStage.addEventListener(
+  'pointerdown',
+  event=>{
+    if(!framePhoto)return;
+
+    frameDragging=true;
+
+    frameStage.setPointerCapture(
+      event.pointerId
+    );
+
+    const point=
+      framePointerPosition(event);
+
+    frameLastX=point.x;
+    frameLastY=point.y;
+  }
+);
+
+frameStage.addEventListener(
+  'pointermove',
+  event=>{
+    if(
+      !frameDragging ||
+      !framePhoto
+    ){
+      return;
+    }
+
+    const point=
+      framePointerPosition(event);
+
+    frameOffsetX+=
+      point.x-frameLastX;
+
+    frameOffsetY+=
+      point.y-frameLastY;
+
+    frameLastX=point.x;
+    frameLastY=point.y;
+
+    frameClampOffsets();
+    frameRender();
+  }
+);
+
+function stopFrameDrag(event){
+  if(!frameDragging)return;
+
+  frameDragging=false;
+
+  try{
+    frameStage.releasePointerCapture(
+      event.pointerId
+    );
+  }catch(_){}
+}
+
+frameStage.addEventListener(
+  'pointerup',
+  stopFrameDrag
+);
+
+frameStage.addEventListener(
+  'pointercancel',
+  stopFrameDrag
+);
+
+frameStage.addEventListener(
+  'touchmove',
+  event=>{
+    if(framePhoto){
+      event.preventDefault();
+    }
+  },
+  {passive:false}
+);
+
+async function frameCanvasToBlob(){
+  frameRender();
+
+  return new Promise(
+    (resolve,reject)=>{
+      frameCanvas.toBlob(
+        blob=>{
+          if(blob){
+            resolve(blob);
+          }else{
+            reject(
+              new Error(
+                'PNG creation failed'
+              )
+            );
+          }
+        },
+        'image/png',
+        1
+      );
+    }
+  );
+}
+
+function downloadFrameBlob(
+  blob,
+  filename
+){
+  const url=
+    URL.createObjectURL(blob);
+
+  const link=
+    document.createElement('a');
+
+  link.href=url;
+  link.download=filename;
+
+  document.body.appendChild(link);
+
+  link.click();
+  link.remove();
+
+  setTimeout(
+    ()=>URL.revokeObjectURL(url),
+    2500
+  );
+}
+
+frameDownloadBtn.addEventListener(
+  'click',
+  async()=>{
+    if(!framePhoto)return;
+
+    try{
+      const blob=
+        await frameCanvasToBlob();
+
+      downloadFrameBlob(
+        blob,
+        'EMPOWERED-JIL-Taguig-33rd-Anniversary.png'
+      );
+    }catch(error){
+      console.error(error);
+
+      alert(
+        'The PNG could not be created. Please try again.'
+      );
+    }
+  }
+);
+
+frameShareBtn.addEventListener(
+  'click',
+  async()=>{
+    if(!framePhoto)return;
+
+    const originalText=
+      frameShareBtn.textContent;
+
+    frameShareBtn.disabled=true;
+    frameShareBtn.textContent=
+      'Preparing…';
+
+    try{
+      const blob=
+        await frameCanvasToBlob();
+
+      const file=
+        new File(
+          [blob],
+          'EMPOWERED-JIL-Taguig-33rd-Anniversary.png',
+          {type:'image/png'}
+        );
+
+      if(
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare(
+          {files:[file]}
+        )
+      ){
+        await navigator.share({
+          title:
+            'EMPOWERED — JIL Taguig City 33rd Anniversary',
+
+          files:[file]
+        });
+      }else{
+        downloadFrameBlob(
+          blob,
+          file.name
+        );
+
+        alert(
+          'Direct image sharing is not supported here. The PNG was downloaded instead.'
+        );
+      }
+    }catch(error){
+      if(
+        !error ||
+        error.name!=='AbortError'
+      ){
+        console.error(error);
+
+        alert(
+          'The image could not be shared. Please use Download PNG instead.'
+        );
+      }
+    }finally{
+      frameShareBtn.disabled=false;
+      frameShareBtn.textContent=
+        originalText;
+    }
+  }
+);
+
+
+frameCopyLinkBtn.addEventListener('click',async()=>{
+  const frameUrl='https://rsvp.jilwanman.xyz/#frame';
+  const originalText=frameCopyLinkBtn.textContent;
+
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(frameUrl);
+    }else{
+      const temp=document.createElement('textarea');
+      temp.value=frameUrl;
+      temp.setAttribute('readonly','');
+      temp.style.position='fixed';
+      temp.style.opacity='0';
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      temp.remove();
+    }
+
+    frameCopyLinkBtn.textContent='✓ Copied!';
+    frameCopyLinkBtn.classList.add('copied');
+
+    setTimeout(()=>{
+      frameCopyLinkBtn.textContent=originalText;
+      frameCopyLinkBtn.classList.remove('copied');
+    },1800);
+
+  }catch(error){
+    console.error(error);
+    alert('Could not copy the link. Please copy this manually: '+frameUrl);
+  }
+});
+
+frameDrawPlaceholder();
+
+</script>
  </body>
 </html>
