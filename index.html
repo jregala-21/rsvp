@@ -927,6 +927,55 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;back
   border-color:#bfe4cc
 }
 
+
+.frame-caption{
+  margin-top:14px;
+  background:#fbf6fd;
+  border:1px solid #e7d5ee;
+  border-radius:16px;
+  padding:14px;
+}
+.frame-caption-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:9px;
+}
+.frame-caption-head b{
+  color:#6f218b;
+  font-size:13px;
+}
+.frame-caption-copy{
+  width:38px;
+  height:38px;
+  min-height:38px;
+  padding:0;
+  border-radius:12px;
+  background:#fff;
+  color:#7b209a;
+  border:1px solid #dec9e6;
+  box-shadow:0 7px 18px rgba(100,28,122,.08);
+  font-size:17px;
+}
+.frame-caption-copy.copied{
+  background:#ebf9ef;
+  color:#26734d;
+  border-color:#bfe4cc;
+}
+.frame-caption-text{
+  white-space:pre-wrap;
+  color:#f3f0f5;
+  background:#4a4a4a;
+  border-radius:18px;
+  padding:16px;
+  font-size:14px;
+  line-height:1.55;
+  max-height:none;
+  overflow:visible;
+  user-select:text;
+}
+
 </style>
  </head>
  <body>
@@ -1225,6 +1274,27 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;back
         <button class="frame-copy-link" id="frameCopyLinkBtn" type="button">🔗 Copy Anniversary Frame Link</button>
         <div class="frame-note">Share Image uses your phone's native share sheet. Copy Link copies the direct Anniversary Frame URL.</div>
 
+        <div class="frame-caption">
+          <div class="frame-caption-head">
+            <b>Anniversary Caption</b>
+            <button class="frame-caption-copy" id="frameCaptionCopyBtn" type="button" aria-label="Copy anniversary caption" title="Copy caption">📋</button>
+          </div>
+          <div class="frame-caption-text" id="frameCaptionText">💜 For 33 Years of JIL Taguig City, the Lord has been so faithful. That is why, this is my declaration:
+
+I am EMPOWERED by the Spirit God has given me. I choose to walk in discipline, live in breakthrough, and move forward with power, love, and self-discipline. 🙌💜
+
+Happy 33rd Anniversary, JIL Taguig City! 🎉
+See you all on August 30, 2026, at 8:00 AM and 2:00 PM!
+
+Walking in Discipline. Living in Breakthrough.
+EMPOWERED! 💜🔥
+
+#JILTaguigCity33rd
+#EMPOWERED
+#WalkingInDiscipline
+#LivingInBreakthrough</div>
+        </div>
+
         <div class="frame-tip"><b>Tip:</b> Use a square or portrait photo and keep your face near the center.</div>
 
         <div class="frame-actions">
@@ -1489,7 +1559,7 @@ const frameCopyLinkBtn=document.getElementById('frameCopyLinkBtn');
 const frameFilterButtons=[...document.querySelectorAll('.frame-filter-btn')];
 
 const frameOverlay=new Image();
-frameOverlay.src='frame1.png';
+frameOverlay.src='frame.png';
 
 let framePhoto=null;
 let frameFilteredCanvas=null;
@@ -2120,6 +2190,45 @@ frameCopyLinkBtn.addEventListener('click',async()=>{
     alert('Could not copy the link. Please copy this manually: '+frameUrl);
   }
 });
+
+
+const frameCaptionCopyBtn=document.getElementById('frameCaptionCopyBtn');
+const frameCaptionText=document.getElementById('frameCaptionText');
+
+if(frameCaptionCopyBtn && frameCaptionText){
+  frameCaptionCopyBtn.addEventListener('click',async()=>{
+    const text=frameCaptionText.textContent.trim();
+    const original=frameCaptionCopyBtn.textContent;
+
+    try{
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(text);
+      }else{
+        const temp=document.createElement('textarea');
+        temp.value=text;
+        temp.setAttribute('readonly','');
+        temp.style.position='fixed';
+        temp.style.opacity='0';
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        temp.remove();
+      }
+
+      frameCaptionCopyBtn.textContent='✓';
+      frameCaptionCopyBtn.classList.add('copied');
+
+      setTimeout(()=>{
+        frameCaptionCopyBtn.textContent=original;
+        frameCaptionCopyBtn.classList.remove('copied');
+      },1800);
+
+    }catch(error){
+      console.error(error);
+      alert('Could not copy the caption. Please select and copy it manually.');
+    }
+  });
+}
 
 frameDrawPlaceholder();
 
