@@ -1233,7 +1233,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;back
     <section class="frame-grid">
       <div class="frame-card">
         <h2>Your Photo</h2>
-        <p class="frame-lead">Drag directly on the preview to reposition your photo behind the frame.</p>
+        <p class="frame-lead">Drag with one finger to reposition. Pinch with two fingers to zoom your photo behind the frame.</p>
         <div class="frame-stage" id="frameStage">
           <canvas id="frameCanvas" width="1200" height="1200"></canvas>
         </div>
@@ -1930,8 +1930,7 @@ frameResetBtn.addEventListener(
 );
 
 function framePointerPosition(event){
-  const rect=
-    frameStage.getBoundingClientRect();
+  const rect=frameStage.getBoundingClientRect();
 
   return{
     x:
@@ -1944,22 +1943,87 @@ function framePointerPosition(event){
   };
 }
 
+/*
+  Mobile gesture support:
+  - One finger / pointer = drag photo
+  - Two fingers = pinch to zoom
+  The zoom slider stays synchronized.
+*/
+const framePointers=new Map();
+let framePinching=false;
+let framePinchStartDistance=0;
+let framePinchStartZoom=1;
+let framePinchStartCenter=null;
+let framePinchStartOffsetX=0;
+let framePinchStartOffsetY=0;
+
+function framePointerDistance(a,b){
+  const dx=b.x-a.x;
+  const dy=b.y-a.y;
+  return Math.hypot(dx,dy);
+}
+
+function framePointerCenter(a,b){
+  return{
+    x:(a.x+b.x)/2,
+    y:(a.y+b.y)/2
+  };
+}
+
+function frameUpdateZoomUI(){
+  const percent=Math.round(frameZoom*100);
+  frameZoomRange.value=String(
+    Math.max(
+      Number(frameZoomRange.min||100),
+      Math.min(
+        Number(frameZoomRange.max||260),
+        percent
+      )
+    )
+  );
+  frameZoomValue.textContent=Math.round(frameZoom*100)+'%';
+}
+
 frameStage.addEventListener(
   'pointerdown',
   event=>{
     if(!framePhoto)return;
 
-    frameDragging=true;
+    const point=framePointerPosition(event);
 
-    frameStage.setPointerCapture(
-      event.pointerId
-    );
+    framePointers.set(event.pointerId,point);
 
-    const point=
-      framePointerPosition(event);
+    try{
+      frameStage.setPointerCapture(event.pointerId);
+    }catch(_){}
 
-    frameLastX=point.x;
-    frameLastY=point.y;
+    if(framePointers.size===1){
+      frameDragging=true;
+      framePinching=false;
+
+      frameLastX=point.x;
+      frameLastY=point.y;
+    }
+
+    else if(framePointers.size===2){
+      frameDragging=false;
+      framePinching=true;
+
+      const points=[...framePointers.values()];
+      const a=points[0];
+      const b=points[1];
+
+      framePinchStartDistance=
+        Math.max(1,framePointerDistance(a,b));
+
+      framePinchStartZoom=frameZoom;
+
+      framePinchStartCenter=
+        framePointerCenter(a,b);
+
+      framePinchStartOffsetX=frameOffsetX;
+      framePinchStartOffsetY=frameOffsetY;
+    }
   }
 );
 
@@ -1967,51 +2031,140 @@ frameStage.addEventListener(
   'pointermove',
   event=>{
     if(
-      !frameDragging ||
-      !framePhoto
+      !framePhoto ||
+      !framePointers.has(event.pointerId)
     ){
       return;
     }
 
-    const point=
-      framePointerPosition(event);
+    const point=framePointerPosition(event);
+    framePointers.set(event.pointerId,point);
 
-    frameOffsetX+=
-      point.x-frameLastX;
+    /*
+      Two-finger pinch zoom.
+    */
+    if(
+      framePinching &&
+      framePointers.size>=2
+    ){
+      const points=[...framePointers.values()];
+      const a=points[0];
+      const b=points[1];
 
-    frameOffsetY+=
-      point.y-frameLastY;
+      const distance=
+        Math.max(1,framePointerDistance(a,b));
 
-    frameLastX=point.x;
-    frameLastY=point.y;
+      const center=
+        framePointerCenter(a,b);
 
-    frameClampOffsets();
-    frameRender();
+      const zoomFactor=
+        distance/framePinchStartDistance;
+
+      const minZoom=
+        Number(frameZoomRange.min||100)/100;
+
+      const maxZoom=
+        Number(frameZoomRange.max||260)/100;
+
+      frameZoom=Math.max(
+        minZoom,
+        Math.min(
+          maxZoom,
+          framePinchStartZoom*zoomFactor
+        )
+      );
+
+      /*
+        Move the image with the pinch center too,
+        so the gesture feels natural.
+      */
+      if(framePinchStartCenter){
+        frameOffsetX=
+          framePinchStartOffsetX +
+          (center.x-framePinchStartCenter.x);
+
+        frameOffsetY=
+          framePinchStartOffsetY +
+          (center.y-framePinchStartCenter.y);
+      }
+
+      frameClampOffsets();
+      frameUpdateZoomUI();
+      frameRender();
+      return;
+    }
+
+    /*
+      One-finger drag.
+    */
+    if(
+      frameDragging &&
+      framePointers.size===1
+    ){
+      frameOffsetX+=
+        point.x-frameLastX;
+
+      frameOffsetY+=
+        point.y-frameLastY;
+
+      frameLastX=point.x;
+      frameLastY=point.y;
+
+      frameClampOffsets();
+      frameRender();
+    }
   }
 );
 
-function stopFrameDrag(event){
-  if(!frameDragging)return;
-
-  frameDragging=false;
+function frameEndPointer(event){
+  framePointers.delete(event.pointerId);
 
   try{
-    frameStage.releasePointerCapture(
-      event.pointerId
-    );
+    frameStage.releasePointerCapture(event.pointerId);
   }catch(_){}
+
+  /*
+    If one finger remains after pinching,
+    seamlessly return to dragging.
+  */
+  if(framePointers.size===1){
+    const remaining=
+      [...framePointers.values()][0];
+
+    framePinching=false;
+    frameDragging=true;
+
+    frameLastX=remaining.x;
+    frameLastY=remaining.y;
+  }else{
+    framePinching=false;
+    frameDragging=false;
+  }
 }
 
 frameStage.addEventListener(
   'pointerup',
-  stopFrameDrag
+  frameEndPointer
 );
 
 frameStage.addEventListener(
   'pointercancel',
-  stopFrameDrag
+  frameEndPointer
 );
 
+frameStage.addEventListener(
+  'pointerleave',
+  event=>{
+    if(framePointers.has(event.pointerId)){
+      frameEndPointer(event);
+    }
+  }
+);
+
+/*
+  Prevent the page itself from scrolling or zooming
+  while editing the photo on mobile.
+*/
 frameStage.addEventListener(
   'touchmove',
   event=>{
