@@ -355,7 +355,128 @@ tbody tr:hover {
     padding:22px
   }
 }
-  </style>
+  
+/* ===== Duplicate controls + overview modal ===== */
+.paneltools{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap
+}
+.overview-btn{
+  min-height:44px;
+  padding:0 16px;
+  border:0;
+  border-radius:14px;
+  background:linear-gradient(135deg,#7b209a,#b84bd5);
+  color:#fff;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(111,23,138,.18)
+}
+.hide-dup-note{
+  font-size:11px;
+  color:#7b627f
+}
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(29,12,34,.55);
+  backdrop-filter:blur(8px)
+}
+.modal.show{
+  display:flex
+}
+.modal-card{
+  width:min(100%,620px);
+  background:#fff;
+  border-radius:26px;
+  box-shadow:0 30px 90px rgba(31,8,38,.3);
+  overflow:hidden
+}
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:20px 22px;
+  color:#fff;
+  background:linear-gradient(135deg,#6f178d,#b84bd5)
+}
+.modal-head h3{
+  margin:0;
+  font-size:23px
+}
+.modal-close{
+  width:38px;
+  height:38px;
+  min-height:38px;
+  padding:0;
+  border:0;
+  border-radius:12px;
+  background:rgba(255,255,255,.16);
+  color:#fff;
+  font-size:22px;
+  cursor:pointer
+}
+.modal-body{
+  padding:20px
+}
+.overview-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px
+}
+.overview-stat{
+  border:1px solid #eaddef;
+  border-radius:18px;
+  padding:17px;
+  background:#fbf7fc;
+  text-align:center
+}
+.overview-stat span{
+  display:block;
+  color:#765f7b;
+  font-size:11px;
+  font-weight:850;
+  margin-bottom:6px
+}
+.overview-stat strong{
+  display:block;
+  font-size:38px;
+  line-height:1;
+  color:#7b209a
+}
+.overview-summary{
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#f5e8fb;
+  color:#6e5076;
+  font-size:12px;
+  line-height:1.5
+}
+@media(max-width:700px){
+  .paneltools{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr
+  }
+  .overview-btn{
+    width:100%
+  }
+  .overview-grid{
+    grid-template-columns:1fr
+  }
+}
+
+</style>
  </head>
  <body>
   <main class="wrap">
@@ -410,7 +531,17 @@ tbody tr:hover {
      <h2>
       Guest List
      </h2>
-     <input class="search" id="search" oninput="render()" placeholder="Search name, contact, service&hellip;"/>
+     <div class="paneltools">
+      <input class="search" id="search" oninput="render()" placeholder="Search name, contact, service&hellip;"/>
+      <button class="overview-btn" onclick="openOverview()" type="button">Overview</button>
+     </div>
+    </div>
+    <div class="togglebar">
+     <label class="toggle" for="hideDuplicates">
+      <input id="hideDuplicates" onchange="render()" type="checkbox"/>
+      Hide duplicate submissions
+     </label>
+     <span class="hide-dup-note" id="dupCount">0 duplicate submissions detected</span>
     </div>
     <div class="tablewrap">
      <table>
@@ -434,6 +565,9 @@ tbody tr:hover {
         <th>
          Submitted
         </th>
+        <th>
+         Actions
+        </th>
        </tr>
       </thead>
       <tbody id="rows">
@@ -451,6 +585,35 @@ tbody tr:hover {
     EMPOWERED &bull; Walking in Discipline. Living in Breakthrough.
    </div>
   </main>
+
+  <div class="modal" id="overviewModal" aria-hidden="true">
+   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="overviewTitle">
+    <div class="modal-head">
+     <h3 id="overviewTitle">Attendance Overview</h3>
+     <button class="modal-close" onclick="closeOverview()" type="button" aria-label="Close overview">&times;</button>
+    </div>
+    <div class="modal-body">
+     <div class="overview-grid">
+      <div class="overview-stat">
+       <span>First Service • 8:00 AM</span>
+       <strong id="overviewFirst">0</strong>
+      </div>
+      <div class="overview-stat">
+       <span>Second Service • 2:00 PM</span>
+       <strong id="overviewSecond">0</strong>
+      </div>
+      <div class="overview-stat">
+       <span>Online</span>
+       <strong id="overviewOnline">0</strong>
+      </div>
+     </div>
+     <div class="overview-summary" id="overviewSummary">
+      Duplicate submissions with the same name and same service are counted once.
+     </div>
+    </div>
+   </div>
+  </div>
+
   <script>
    const GOOGLE_APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbyCzSV8m-OhtXRsIpSMmqwHPcz168MKp8lKjIPk42vn5Ek1Q-SVoewq259q1p8mMacCvg/exec";
 let records=[],loading=false;
@@ -489,64 +652,244 @@ function updateStats(s) {
   document.getElementById('inPerson').textContent=s?.inPerson??records.filter(r=>norm(r.attendance)==='in person').length;
   document.getElementById('online').textContent=s?.online??records.filter(r=>norm(r.attendance)==='online').length
 }
-function duplicateNameKeys() {
-  const counts=new Map();
-  records.forEach(r=>{
-    const key=normName(r.name);
-    if(!key)return;
-    counts.set(key,(counts.get(key)||0)+1)
-  });
-  return new Set([...counts.entries()].filter(([,count])=>count>1).map(([key])=>key))
-}
-
 function normName(v) {
   return String(v||'').trim().toLowerCase().replace(/\s+/g,' ')
 }
 
-function render() {
-  const q=document.getElementById('search').value.trim().toLowerCase();
-  const duplicateKeys=duplicateNameKeys();
-  const duplicatesToggle=document.getElementById('duplicatesOnly');
-  const duplicatesOnly=duplicatesToggle ? duplicatesToggle.checked : false;
-  const duplicateEntryCount=records.filter(r=>duplicateKeys.has(normName(r.name))).length;
-  const dupCountEl=document.getElementById('dupCount');
-  if(dupCountEl){
-    dupCountEl.textContent=duplicateEntryCount+' duplicate-name '+(duplicateEntryCount===1?'entry':'entries');
+function normalizedServiceKey(record) {
+  if(norm(record.attendance)==='online'){
+    return 'online';
   }
 
-  const f=records.filter(r=>{
-    const matchesSearch=!q||[r.name,r.contact,r.attendance,r.service].join(' ').toLowerCase().includes(q);
-    const matchesDuplicate=!duplicatesOnly||duplicateKeys.has(normName(r.name));
-    return matchesSearch&&matchesDuplicate
+  const service=formatService(record.service);
+
+  if(service==='8:00 AM'){
+    return '8:00 am';
+  }
+
+  if(service==='2:00 PM'){
+    return '2:00 pm';
+  }
+
+  return norm(service||record.service||record.attendance);
+}
+
+function duplicateKey(record) {
+  const name=normName(record.name);
+  const service=normalizedServiceKey(record);
+
+  if(!name || !service){
+    return '';
+  }
+
+  return name+'||'+service;
+}
+
+/*
+  Same name + same service = duplicate.
+  Same name + different service = valid separate attendance.
+  The API returns newest first, so hiding duplicates keeps the newest entry.
+*/
+function uniqueAttendanceRecords() {
+  const seen=new Set();
+
+  return records.filter(record=>{
+    const key=duplicateKey(record);
+
+    if(!key){
+      return true;
+    }
+
+    if(seen.has(key)){
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+}
+
+function duplicateSubmissionCount() {
+  return records.length-uniqueAttendanceRecords().length;
+}
+
+function render() {
+  const searchEl=document.getElementById('search');
+  const tbody=document.getElementById('rows');
+  const empty=document.getElementById('empty');
+
+  if(!searchEl || !tbody || !empty){
+    console.error('Dashboard table elements are missing.');
+    return;
+  }
+
+  const q=searchEl.value.trim().toLowerCase();
+
+  const toggle=document.getElementById('hideDuplicates');
+  const hideDuplicates=Boolean(toggle && toggle.checked);
+
+  const source=hideDuplicates
+    ? uniqueAttendanceRecords()
+    : records;
+
+  const duplicateCount=duplicateSubmissionCount();
+  const dupCount=document.getElementById('dupCount');
+
+  if(dupCount){
+    dupCount.textContent=hideDuplicates
+      ? duplicateCount+' duplicate '+(duplicateCount===1?'submission':'submissions')+' hidden'
+      : duplicateCount+' duplicate '+(duplicateCount===1?'submission':'submissions')+' detected';
+  }
+
+  const filtered=source.filter(record=>{
+    if(!q){
+      return true;
+    }
+
+    return [
+      record.name,
+      record.contact,
+      record.attendance,
+      record.service
+    ]
+      .join(' ')
+      .toLowerCase()
+      .includes(q);
   });
 
-  const tbody=document.getElementById('rows'),empty=document.getElementById('empty');
   tbody.innerHTML='';
 
-  if(!f.length) {
+  if(!filtered.length){
     empty.style.display='block';
-    if(duplicatesOnly){
-      empty.textContent=records.length?'No duplicate names found.':'No RSVP responses yet.'
+
+    if(!records.length){
+      empty.textContent='No RSVP responses yet.';
+    }else if(q){
+      empty.textContent='No matching guests found.';
     }else{
-      empty.textContent=records.length?'No matching guests found.':'No RSVP responses yet.'
+      empty.textContent='No RSVP responses to display.';
     }
-    return
+
+    return;
   }
 
   empty.style.display='none';
 
-  f.forEach((r,i)=>{
+  filtered.forEach((record,index)=>{
     const tr=document.createElement('tr');
-    const a=String(r.attendance||'');
-    const c=norm(a)==='online'?'online':'person';
-    const isDuplicate=duplicateKeys.has(normName(r.name));
-    if(isDuplicate)tr.classList.add('dup-row');
 
-    const rowNumber=Number(r.rowNumber||0);
-    tr.innerHTML=`<td>${i+1}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.contact)}</td><td><span class="badge ${c}">${esc(a)}</span></td><td>${esc(formatService(r.service))}</td><td>${esc(formatDate(r.receivedAt||r.submittedAt))}</td><td><button class="delete-btn" type="button" title="Delete ${esc(r.name)}" aria-label="Delete ${esc(r.name)}" ${rowNumber?'':'disabled'} onclick="deleteRsvp(${rowNumber}, this)">🗑</button></td>`;
-    tbody.appendChild(tr)
-  })
+    const attendance=String(record.attendance||'');
+    const badgeClass=
+      norm(attendance)==='online'
+        ? 'online'
+        : 'person';
+
+    const rowNumber=
+      Number(record.rowNumber||0);
+
+    tr.innerHTML=`
+      <td>${index+1}</td>
+      <td><b>${esc(record.name)}</b></td>
+      <td>${esc(record.contact)}</td>
+      <td><span class="badge ${badgeClass}">${esc(attendance)}</span></td>
+      <td>${esc(formatService(record.service))}</td>
+      <td>${esc(formatDate(record.receivedAt||record.submittedAt))}</td>
+      <td>
+       <button
+        class="delete-btn"
+        type="button"
+        title="Delete ${esc(record.name)}"
+        aria-label="Delete ${esc(record.name)}"
+        ${rowNumber?'':'disabled'}
+        onclick="deleteRsvp(${rowNumber}, this)"
+       >🗑</button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
 }
+
+function getOverviewCounts() {
+  const unique=uniqueAttendanceRecords();
+
+  const first=unique.filter(record=>{
+    return (
+      norm(record.attendance)==='in person' &&
+      formatService(record.service)==='8:00 AM'
+    );
+  }).length;
+
+  const second=unique.filter(record=>{
+    return (
+      norm(record.attendance)==='in person' &&
+      formatService(record.service)==='2:00 PM'
+    );
+  }).length;
+
+  const online=unique.filter(record=>{
+    return norm(record.attendance)==='online';
+  }).length;
+
+  return {
+    first,
+    second,
+    online,
+    uniqueTotal:unique.length,
+    duplicatesRemoved:records.length-unique.length
+  };
+}
+
+function openOverview() {
+  const modal=document.getElementById('overviewModal');
+
+  if(!modal){
+    return;
+  }
+
+  const counts=getOverviewCounts();
+
+  document.getElementById('overviewFirst').textContent=counts.first;
+  document.getElementById('overviewSecond').textContent=counts.second;
+  document.getElementById('overviewOnline').textContent=counts.online;
+
+  document.getElementById('overviewSummary').textContent=
+    'Unique attendance: '+counts.uniqueTotal+
+    ' • Duplicate submissions removed: '+counts.duplicatesRemoved+
+    '. Same name + same service is counted once. The same person attending different services is counted separately.';
+
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+}
+
+function closeOverview() {
+  const modal=document.getElementById('overviewModal');
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const modal=document.getElementById('overviewModal');
+
+  if(modal){
+    modal.addEventListener('click',event=>{
+      if(event.target===event.currentTarget){
+        closeOverview();
+      }
+    });
+  }
+});
+
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){
+    closeOverview();
+  }
+});
 
 async function deleteRsvp(rowNumber,button) {
   if(!rowNumber)return;
