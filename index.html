@@ -977,9 +977,59 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;back
   user-select:text;
 }
 
+
+/* ===== Facebook / Messenger in-app browser helper ===== */
+.inapp-gate{
+  position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+  padding:18px;background:linear-gradient(145deg,rgba(61,8,78,.97),rgba(125,31,157,.98));
+  backdrop-filter:blur(14px)
+}
+.inapp-gate.show{display:flex}
+.inapp-card{
+  width:min(100%,520px);background:rgba(255,255,255,.98);border-radius:28px;padding:22px;
+  box-shadow:0 30px 90px rgba(20,0,28,.4);text-align:center
+}
+.inapp-icon{
+  width:66px;height:66px;margin:0 auto 12px;border-radius:20px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#7b209a,#bd4fda);color:#fff;font-size:30px
+}
+.inapp-card h2{margin:0 0 8px;font-size:27px;color:#4e2259}
+.inapp-card p{margin:0;color:#725779;font-size:13px;line-height:1.55}
+.inapp-steps{
+  margin:16px 0 0;padding:14px;border-radius:16px;background:#f7effa;color:#62476a;
+  text-align:left;font-size:12px;line-height:1.6
+}
+.inapp-actions{display:grid;gap:9px;margin-top:16px}
+.inapp-primary,.inapp-secondary,.inapp-continue{
+  width:100%;min-height:50px;border:0;border-radius:15px;font:inherit;font-weight:900;cursor:pointer
+}
+.inapp-primary{color:#fff;background:linear-gradient(135deg,#7b209a,#bd4fda)}
+.inapp-secondary{color:#6f218b;background:#f3e5f8}
+.inapp-continue{color:#765e7c;background:#fff;border:1px solid #e7d6ed}
+.inapp-copy-status{min-height:18px;margin-top:8px;color:#2d7048;font-size:11px;font-weight:850}
+@media(max-width:520px){.inapp-card{border-radius:22px;padding:18px}.inapp-card h2{font-size:24px}}
+
 </style>
  </head>
  <body>
+
+  <div class="inapp-gate" id="inAppGate" aria-hidden="true">
+   <div class="inapp-card" role="dialog" aria-modal="true" aria-labelledby="inAppTitle">
+    <div class="inapp-icon">🌐</div>
+    <h2 id="inAppTitle">Open in Safari or Chrome</h2>
+    <p>Facebook or Messenger's built-in browser may block saving and sharing your finished anniversary photo.</p>
+    <div class="inapp-steps" id="inAppSteps">
+     Tap the <b>•••</b> menu in Facebook or Messenger, then choose <b>Open in external browser</b>.
+    </div>
+    <div class="inapp-actions">
+     <button class="inapp-primary" id="inAppCopyBtn" type="button">🔗 Copy This Link</button>
+     <button class="inapp-secondary" id="inAppChromeBtn" type="button" style="display:none">Open in Chrome</button>
+     <button class="inapp-continue" id="inAppContinueBtn" type="button">Continue Anyway</button>
+    </div>
+    <div class="inapp-copy-status" id="inAppCopyStatus"></div>
+   </div>
+  </div>
+
   <div aria-hidden="true" class="fireworks-layer" id="fireworksLayer"></div>
   <div aria-hidden="true" class="celebrate-flash" id="celebrateFlash"></div>
   <div aria-hidden="true" class="glitter" id="glitter">
@@ -2385,6 +2435,91 @@ if(frameCaptionCopyBtn && frameCaptionText){
 }
 
 frameDrawPlaceholder();
+
+
+
+/* ===== Detect Facebook / Messenger in-app browser ===== */
+(function(){
+  const ua=navigator.userAgent||'';
+  const isFacebook=/FBAN|FBAV|FB_IAB|FB4A|FBIOS/i.test(ua);
+  const isMessenger=/Messenger|FBAN\/Messenger/i.test(ua);
+
+  if(!isFacebook && !isMessenger)return;
+
+  const gate=document.getElementById('inAppGate');
+  const copyBtn=document.getElementById('inAppCopyBtn');
+  const chromeBtn=document.getElementById('inAppChromeBtn');
+  const continueBtn=document.getElementById('inAppContinueBtn');
+  const status=document.getElementById('inAppCopyStatus');
+  const steps=document.getElementById('inAppSteps');
+
+  if(!gate)return;
+
+  const currentUrl=location.href;
+  const isAndroid=/Android/i.test(ua);
+  const isIOS=/iPhone|iPad|iPod/i.test(ua);
+
+  gate.classList.add('show');
+  gate.setAttribute('aria-hidden','false');
+  document.documentElement.style.overflow='hidden';
+  document.body.style.overflow='hidden';
+
+  if(isIOS && steps){
+    steps.innerHTML='Tap the <b>•••</b> menu in Facebook or Messenger, then choose <b>Open in external browser</b> or <b>Open in Safari</b>.';
+  }else if(isAndroid && steps){
+    steps.innerHTML='Tap the <b>•••</b> menu in Facebook or Messenger, then choose <b>Open in external browser</b> or <b>Open in Chrome</b>.';
+  }
+
+  async function copyCurrentLink(){
+    try{
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(currentUrl);
+      }else{
+        const temp=document.createElement('textarea');
+        temp.value=currentUrl;
+        temp.setAttribute('readonly','');
+        temp.style.position='fixed';
+        temp.style.opacity='0';
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        temp.remove();
+      }
+
+      if(status)status.textContent='✓ Link copied. Paste it into Safari or Chrome.';
+      const old=copyBtn.textContent;
+      copyBtn.textContent='✓ Copied!';
+      setTimeout(()=>{copyBtn.textContent=old},1600);
+
+    }catch(error){
+      console.error(error);
+      if(status)status.textContent='Could not copy automatically. Please copy the page URL manually.';
+    }
+  }
+
+  copyBtn.addEventListener('click',copyCurrentLink);
+
+  continueBtn.addEventListener('click',()=>{
+    gate.classList.remove('show');
+    gate.setAttribute('aria-hidden','true');
+    document.documentElement.style.overflow='';
+    document.body.style.overflow='';
+  });
+
+  if(isAndroid && chromeBtn){
+    chromeBtn.style.display='block';
+    chromeBtn.addEventListener('click',()=>{
+      try{
+        const url=new URL(currentUrl);
+        const intent='intent://'+url.host+url.pathname+url.search+url.hash+'#Intent;scheme=https;package=com.android.chrome;end';
+        location.href=intent;
+      }catch(error){
+        console.error(error);
+        copyCurrentLink();
+      }
+    });
+  }
+})();
 
 </script>
  </body>
